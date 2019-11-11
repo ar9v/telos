@@ -1,0 +1,49 @@
+* Telos
+A week-based Pomodoro Timer and a simple Logger.
+
+** Background
+First and foremost, Telos is inspired by the [[https://github.com/merveilles/Time-Travelers][Time Travelers]]. This has several
+implications, but we feel that the most important one is that it is /an attempt/
+at time management; a /work in progress/.
+
+Having said that, Telos does have an underlying heuristic. It is
+Pomodoro-based. Particularly, we believe that while the Pomodoro's foremost goal
+- bringing focus to work - is important, we would like an extra hand
+when it comes to the higher level goals pertaining logging. One such goal is
+effort estimation. Suppose that you use Pomodoro's to complete tasks. How do you
+know when you've dedicated a disproportionate amount of pomodoros to a task? In
+our specific case, as college students, the question is: how do we know when
+we're dedicating more time to a given course /versus/ other courses?
+
+This worry stems mainly from [[https://en.wikipedia.org/wiki/Parkinson%27s_law][Parkinson's Law]], which we believe can be alleviated
+with our heuristic (it is not the only one!!). Namely, each course in our
+college has an associated number of units which represents the amount of hours
+one /should/ dedicate to a given course per week. Therefore, the amount of
+units represents an artificial (but useful) limit. In the next section, we
+explore the implications of this idea.
+
+** Workflow
+In Telos, the user adds Courses (this is merely a logical division of tasks; kind
+of like a tag). Each Course has a weekly allotted time, provided by the user in
+their configuration. So, for example, a Math Course may demand 5 hours a week of
+attention. The user would then, in their dashboard, click on a Course to make it
+active and then run the timer. The net result is that the timer length (a
+classical pomodoro is 25 minutes long; the user can change it) is subtracted
+from the weekly allotted time, giving the user a sense of how much time they
+have dedicated to a given Course at a given week.
+
+** TODO
+- Front end:
+  - Home
+  - About
+  - Login/Signup
+  - Dashboard
+  - Config page
+  - Design favicon/logo
+- Back end:
+  - API
+  - Database
+    - Cluster db creation
+  - Deployment
+- Docs:
+  - Illustrate workflow with screenshots or screencaps
