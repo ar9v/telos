@@ -3,3 +3,32 @@
 nav {
     flex-direction: row-reverse;
 }
+
+main {
+    display: flex;
+}
+
+img {
+    width: 70%;
+}
+
+figure {
+    text-align: center;
+}
+
+.text {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.images {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+footer > a {
+    background: none;
+}
