@@ -1,5 +1,23 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Open Sans', sans-serif;
     background: #222;
     color: whitesmoke;
+}
+
+a, button {
+    color: whitesmoke;
+    background: #1E9500;
+    text-decoration: none;
+    text-align: center;
+    width: 170px;
+    height: 50px;
+    padding: 12px 5px;
+}
+
+nav {
+    display: flex;
 }

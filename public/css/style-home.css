@@ -1,1 +1,28 @@
-@import "style-global.css"
+@import "style-global.css";
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* We need our navbar to stretch so justify-content may come into effect */
+nav {
+    align-self: stretch;
+    justify-content: space-evenly;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.features {
+    display: flex;
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+}
