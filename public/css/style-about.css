@@ -29,6 +29,20 @@ figure {
     align-items: stretch;
 }
 
+footer {
+    text-align: center;
+}
+
 footer > a {
     background: none;
+}
+
+.fade-border {
+    display: block;
+    border: none;
+    color: whitesmoke;
+    height: 1px;
+    background: #222;
+    /* background: -webkit-gradient(radial, 10% 10%, 0, 50% 50%, 360, from(whitesmoke), to(#222)); */
+    background: -webkit-radial-gradient(whitesmoke, #222 50%);
 }
