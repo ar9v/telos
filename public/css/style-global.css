@@ -8,9 +8,14 @@ body {
     color: whitesmoke;
 }
 
-a, button {
+h1, h2, h3, h4 {
+    font-family: 'Open Sans', sans-serif;
+}
+
+a, button, input[type=submit] {
     color: whitesmoke;
     background: #1E9500;
+    border: solid 1px #1E9500;
     opacity: 0.9;
     text-decoration: none;
     text-align: center;
@@ -19,8 +24,16 @@ a, button {
     padding: 12px 5px;
 }
 
-a:hover {
+a:hover, button:hover {
     opacity: 1;
+}
+
+input[type=text], input[type=password] {
+    background: gainsboro;
+    border: solid 1px gainsboro;
+    color: #222;
+    padding: 5px;
+    font-family: 'Open Sans', sans-serif;
 }
 
 nav {
