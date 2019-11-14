@@ -1,0 +1,20 @@
+@import "style-global.css";
+
+nav {
+    flex-direction: row-reverse;
+}
+
+.timer-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.navi-button {
+    background: #222;
+    border: solid 1px #222;
+}
+
+.navi-button:hover {
+    background: #444;
+}
