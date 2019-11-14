@@ -6,6 +6,7 @@ body {
     font-family: 'Open Sans', sans-serif;
     background: #222;
     color: whitesmoke;
+    margin: 40px;
 }
 
 h1, h2, h3, h4 {
@@ -24,7 +25,7 @@ a, button, input[type=submit] {
     padding: 12px 5px;
 }
 
-a:hover, button:hover {
+a:hover, button:hover, input[type=submit]:hover {
     opacity: 1;
 }
 
@@ -38,4 +39,17 @@ input[type=text], input[type=password] {
 
 nav {
     display: flex;
+}
+
+.w3-modal-content {
+    width: 35%;
+    background: #222;
+}
+
+.w3-animate-opacity {
+    animation-duration: 1.5s;
+}
+
+.w3-animate-top {
+    animation-duration: 0.6s;
 }

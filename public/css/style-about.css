@@ -35,14 +35,16 @@ footer {
 
 footer > a {
     background: none;
+    border: none;
 }
 
 .fade-border {
     display: block;
     border: none;
+    margin: 50px 0;
     color: whitesmoke;
     height: 1px;
     background: #222;
     /* background: -webkit-gradient(radial, 10% 10%, 0, 50% 50%, 360, from(whitesmoke), to(#222)); */
-    background: -webkit-radial-gradient(whitesmoke, #222 50%);
+    background: -webkit-radial-gradient(whitesmoke, #222 60%);
 }
