@@ -59,20 +59,23 @@ let UserList = {
 	},
 	postCourse : function(email, newCourse) {
 		return User.findOneAndUpdate({email: email}, {$push: {courses: newCourse}}, { new: true }).then( user => {
-			return user.course[user.course.length - 1];
+			if (user == null) {
+				return 404;
+			}
+			return user.course[user.courses.length - 1];
 		}).catch(error => {
 			throw Error(error);
 		});
 	},
 	putCourse : function(email, course) {
-		return User.findOneAndUpdate({email: email, course.name: course.name}, {$set: {course.$: course}}, { new: true }).then( user => {
+		return User.findOneAndUpdate({email: email, 'courses.name': course.name}, {$set: {'course.$': course}}, { new: true }).then( user => {
 			return user.course //We could filter out and return only the course we updated.
 		}).catch(error => {
 			throw Error(error);
 		});
 	},
 	deleteCourse : function(email, course) {
-		return User.findOneAndUpdate({email: email}, {$pullAll: { courses: [course]}}).then( => {
+		return User.findOneAndUpdate({email: email}, {$pullAll: { courses: [course]}}).then( () => {
 			return 202;
 		}).catch(error => {
 			throw Error(error);
@@ -81,4 +84,4 @@ let UserList = {
 
 }
 
-module.exports = { StudentList, UserList };
+module.exports = {  UserList };

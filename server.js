@@ -21,6 +21,21 @@ app.post('/api/register', jsonParser, (req, res) => {
 		console.log(err);
 		return res.status(500).json(err);
 	});
+});
+
+app.post('/api/createCourse', jsonParser, (req, res) => {
+	let {email, name, allotedTime} = req.body;
+	UserList.postCourse(email, {name, allotedTime}).then(response => {
+		console.log(response);
+		if(response == 404)  {
+			res.statusMessage = "user not found";
+			return res.status(404).json({message: "user not found"});
+		}
+		return res.status(200).json(response);
+	}).catch( err => {
+		console.log(err);
+		return res.status(500).json(err);
+	})
 })
 
 let server;
