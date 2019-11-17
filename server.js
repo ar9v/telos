@@ -88,6 +88,17 @@ app.post('/api/createTask', jsonParser, (req, res) => {
 		console.log(err);
 		return res.status(500).json(err);
 	})
+});
+
+app.delete('/api/deleteTask', jsonParser, (req, res) => {
+	let { email, name, id} =  req.body;
+	UserList.deleteTask(email, name, id).then( response => {
+		console.log(response);
+		return res.status(200).json(response);
+	}).catch(error => {
+		console.log(error);
+		return res.status(500).json(error);
+	})
 })
 
 let server;

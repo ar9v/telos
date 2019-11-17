@@ -108,6 +108,16 @@ let UserList = {
 		}).catch(error => {
 			throw Error(error);
 		})
+	},
+	deleteTask : function(email, courseName, taskId) {
+		return User.findOneAndUpdate({email, 'courses.name': courseName}, 
+									{$pull: {'courses.$.tasks': {_id: taskId}}}, 
+									{new: true})
+		.then(response => {
+			return response;
+		}).catch( error => {
+			return error;
+		})
 	}
 
 }
