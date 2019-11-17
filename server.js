@@ -65,6 +65,16 @@ app.put('/api/updateCourse', jsonParser, (req, res) => {
 	})
 });
 
+app.delete('/api/deleteCourse', jsonParser, (req, res) => {
+	let {email, name} = req.body;
+	UserList.deleteCourse(email, name).then( response => {
+		return res.status(202).json();
+	}).catch(err => {
+		console.log(err);
+		return res.status(500).json(err);
+	})
+})
+
 let server;
 
 function runServer(port, databaseUrl) {

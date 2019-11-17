@@ -81,8 +81,8 @@ let UserList = {
 			throw Error(error);
 		});
 	},
-	deleteCourse : function(email, course) {
-		return User.findOneAndUpdate({email: email}, {$pullAll: { courses: [course]}}).then( () => {
+	deleteCourse : function(email, name) {
+		return User.findOneAndUpdate({email: email}, {$pull: { courses: {name: name}}}).then( () => {
 			return 202;
 		}).catch(error => {
 			throw Error(error);
