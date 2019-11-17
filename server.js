@@ -23,6 +23,18 @@ app.post('/api/register', jsonParser, (req, res) => {
 	});
 });
 
+app.get('/api/User', jsonParser, (req, res) => {
+	let email = req.query.email;
+	UserList.getByEmail(email).then( response => {
+		console.log(response);
+		return res.status(200).json(response);
+	}).catch( err => {
+		console.log(err);
+		return res.status(500).json(err);
+	})
+
+});
+
 app.post('/api/createCourse', jsonParser, (req, res) => {
 	let {email, name, allotedTime} = req.body;
 	UserList.postCourse(email, {name, allotedTime}).then(response => {
@@ -36,7 +48,7 @@ app.post('/api/createCourse', jsonParser, (req, res) => {
 		console.log(err);
 		return res.status(500).json(err);
 	})
-})
+});
 
 let server;
 
