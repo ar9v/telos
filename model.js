@@ -58,14 +58,19 @@ let UserList = {
 		});
 	},
 	postCourse : function(email, newCourse) {
-		return User.findOneAndUpdate({email: email}, {$push: {courses: newCourse}}, { new: true }).then( user => {
-			if (user == null) {
-				return 404;
+		return User.find({email: email, 'courses.name': newCourse.name}).then( userList => {
+			if (userList.length == 0) {
+				return User.findOneAndUpdate({email: email}, {$push: {courses: newCourse}}, { new: true }).then( user => {
+					if (user == null) {
+						return 404;
+					}
+					return user.courses[user.courses.length - 1];
+				}).catch(error => {
+					throw Error(error);
+				});
 			}
-			return user.courses[user.courses.length - 1];
-		}).catch(error => {
-			throw Error(error);
-		});
+			return 409;
+		})
 	},
 	putCourse : function(email, course) {
 		return User.findOneAndUpdate({email: email, 'courses.name': course.name}, 

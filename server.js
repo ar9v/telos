@@ -40,8 +40,12 @@ app.post('/api/createCourse', jsonParser, (req, res) => {
 	UserList.postCourse(email, {name, allotedTime}).then(response => {
 		console.log(response);
 		if(response == 404)  {
-			res.statusMessage = "user not found";
-			return res.status(404).json({message: "user not found"});
+			res.statusMessage = "User not found";
+			return res.status(404).json({message: "User not found"});
+		}
+		if(response == 409) {
+			res.statusMessage = "Course already Exists";
+			return res.status(409).json({message: "Course already Exist"});
 		}
 		return res.status(200).json(response);
 	}).catch( err => {
