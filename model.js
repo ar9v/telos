@@ -62,15 +62,22 @@ let UserList = {
 			if (user == null) {
 				return 404;
 			}
-			return user.course[user.courses.length - 1];
+			return user.courses[user.courses.length - 1];
 		}).catch(error => {
 			throw Error(error);
 		});
 	},
 	putCourse : function(email, course) {
-		return User.findOneAndUpdate({email: email, 'courses.name': course.name}, {$set: {'course.$': course}}, { new: true }).then( user => {
-			return user.course //We could filter out and return only the course we updated.
-		}).catch(error => {
+		return User.findOneAndUpdate({email: email, 'courses.name': course.name}, 
+									{ $set: {'courses.$': course}}, 
+									{ new: true })
+		.then( user => {
+			if (user == null) {
+				return 404;
+			}
+			return user //We could filter out and return only the course we updated.
+		})
+		.catch(error => {
 			throw Error(error);
 		});
 	},

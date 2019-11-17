@@ -50,6 +50,21 @@ app.post('/api/createCourse', jsonParser, (req, res) => {
 	})
 });
 
+app.put('/api/updateCourse', jsonParser, (req, res) => {
+	let {email, name, allotedTime} = req.body;
+	UserList.putCourse(email, {name, allotedTime}).then( response => {
+		console.log(response);
+		if(response == 404)  {
+			res.statusMessage = "Course not found";
+			return res.status(404).json({message: "Course not found"});
+		}
+		return res.status(200).json(response);
+	}).catch( error => {
+		console.log(error);
+		return res.status(500).json(error);
+	})
+});
+
 let server;
 
 function runServer(port, databaseUrl) {
