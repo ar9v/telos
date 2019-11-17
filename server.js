@@ -14,7 +14,14 @@ app.use(morgan('combined'));
 // API
 app.post('/api/register', jsonParser, (req, res) => {
 	let {email, password} = req.body;
-	UserList.postUser({email, password}).then(user => {
+
+	//Initialize Pomodoro
+	let pomodoro  = {
+		workLength: 25,
+		breakLength: 5,
+		longBreakLength: 30
+	};
+	UserList.postUser({email, password, pomodoro}).then(user => {
 		console.log(user);
 		return res.status(200).json(user);
 	}).catch(err => {
@@ -37,6 +44,7 @@ app.get('/api/User', jsonParser, (req, res) => {
 
 app.post('/api/createCourse', jsonParser, (req, res) => {
 	let {email, name, allotedTime} = req.body;
+
 	UserList.postCourse(email, {name, allotedTime}).then(response => {
 		console.log(response);
 		if(response == 404)  {
