@@ -45,7 +45,7 @@ app.get('/api/User', jsonParser, (req, res) => {
 app.post('/api/createCourse', jsonParser, (req, res) => {
 	let {email, name, allotedTime} = req.body;
 
-	UserList.postCourse(email, {name, allotedTime}).then(response => {
+	UserList.postCourse(email, {name, allotedTime, spentTime: 0}).then(response => {
 		console.log(response);
 		if(response == 404)  {
 			res.statusMessage = "User not found";
