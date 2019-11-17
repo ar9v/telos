@@ -60,7 +60,10 @@ let UserList = {
 	postCourse : function(email, newCourse) {
 		return User.find({email: email, 'courses.name': newCourse.name}).then( userList => {
 			if (userList.length == 0) {
-				return User.findOneAndUpdate({email: email}, {$push: {courses: newCourse}}, { new: true }).then( user => {
+				return User.findOneAndUpdate({email: email},
+											{$push: {courses: newCourse}}, 
+											{ new: true })
+				.then( user => {
 					if (user == null) {
 						return 404;
 					}
@@ -92,6 +95,19 @@ let UserList = {
 		}).catch(error => {
 			throw Error(error);
 		});
+	},
+	createTask : function(email, courseName, task) {
+		return User.findOneAndUpdate({email: email, 'courses.name': courseName}, 
+									{$push: {'courses.$.tasks': task}}, 
+									{ new: true})
+		.then( response => {
+			if(response == null) {
+				return 404;
+			}
+			return response;
+		}).catch(error => {
+			throw Error(error);
+		})
 	}
 
 }
