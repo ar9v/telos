@@ -3,20 +3,20 @@
 }
 
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Fira Sans', sans-serif;
     background: #222;
     color: whitesmoke;
     margin: 40px;
 }
 
 h1, h2, h3, h4 {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Fira Sans', sans-serif;
 }
 
 a, button, input[type=submit] {
     color: whitesmoke;
     /* Buttons do not inherit font from parents */
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Fira Sans', sans-serif;
     background: #1E9500;
     border: solid 1px #1E9500;
     opacity: 0.9;
@@ -36,7 +36,7 @@ input[type=text], input[type=password] {
     border: solid 1px gainsboro;
     color: #222;
     padding: 5px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Fira Sans', sans-serif;
 }
 
 nav {
