@@ -118,6 +118,23 @@ let UserList = {
 		}).catch( error => {
 			return error;
 		})
+	},
+	updatePomodoro : function(email, pomodoro) {
+		//Programtically create the set object
+		// var set = {};
+		// for(var key in pomodoro){ 
+		//   pomodoro[key] !== "" ? set['pomodoro.$.' + key] = pomodoro[key] : null;
+		// }
+		// console.log(set);
+		return User.findOneAndUpdate({email: email}, 
+									{$set: {pomodoro: pomodoro}},
+									{new: true})
+		.then( response => {
+			return response;
+		})
+		.catch(error => {
+			return error;
+		});
 	}
 
 }

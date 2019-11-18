@@ -107,7 +107,16 @@ app.delete('/api/deleteTask', jsonParser, (req, res) => {
 		console.log(error);
 		return res.status(500).json(error);
 	})
-})
+});
+
+app.put('/api/updatePomodoro', jsonParser, (req, res) => {
+	let { email, pomodoro } = req.body;
+	UserList.updatePomodoro(email, pomodoro).then( response => {
+		return res.status(200).json(response);
+	}).catch(err => {
+		return res.status(500).json(err);
+	});
+});
 
 let server;
 
