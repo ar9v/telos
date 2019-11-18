@@ -135,6 +135,15 @@ let UserList = {
 		.catch(error => {
 			return error;
 		});
+	},
+	updateHistory : function(email, name) {
+		return User.findOneAndUpdate({email: email, 'history.name': name}, 
+									{$inc: {'history.$.pomodoroCount': 1}})
+		.then( response => {
+			return resposne;
+		}).catch( error => {
+			return error;
+		})
 	}
 
 }

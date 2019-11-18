@@ -118,6 +118,15 @@ app.put('/api/updatePomodoro', jsonParser, (req, res) => {
 	});
 });
 
+app.put('/api/updateHistory', jsonParser, (req, res) => {
+	let { email, name } = req.body;
+	UserList.updateHistory(email, name).then( response => {
+		return res.status(200).json(response);
+	}).catch(err => {
+		return res.status(500).json(err);
+	})
+});
+
 let server;
 
 function runServer(port, databaseUrl) {
