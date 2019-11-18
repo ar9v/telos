@@ -33,6 +33,12 @@ nav {
 
 .pomodoro-settings {
     display: flex;
+    flex-wrap: wrap;
+}
+
+.course-settings {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .courses-display {
@@ -56,12 +62,17 @@ nav {
     display: flex;
     background: #333;
     height: 20em;
+    overflow-y: auto;
 }
 
 .progress-bar {
     background: whitesmoke;
     width: 100%;
     height: 2px;
+}
+
+.history-block {
+    display: flex;
 }
 
 .w3-input {

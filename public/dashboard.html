@@ -61,32 +61,63 @@
                     <div class="w3-section">
                         <h3>Pomodoro Settings</h3>
                         <div class="pomodoro-settings">
-                            <span>
-                            <label>Pomodoro Length</label>
-                            <input class="w3-input w3-border w3-margin-bottom"
-                                type="text"
-                                placeholder="E.g. 25 (mins)"
-                                name="usrname" required>
-                            </span>
+                            <form>
+                                <span>
+                                <label>Pomodoro Length</label>
+                                <input class="w3-input w3-border w3-margin-bottom"
+                                    type="text"
+                                    placeholder="E.g. 25 (mins)"
+                                    name="pLength" required>
+                                </span>
 
-                            <span>
-                            <label>Break Length</label>
-                            <input class="w3-input w3-border w3-margin-bottom"
-                                type="text"
-                                placeholder="E.g. 5 (mins)"
-                                name="usrname" required>
-                            </span>
+                                <span>
+                                <label>Break Length</label>
+                                <input class="w3-input w3-border w3-margin-bottom"
+                                    type="text"
+                                    placeholder="E.g. 5 (mins)"
+                                    name="bLength" required>
+                                </span>
 
-                            <span>
-                            <label>Long Break Length</label>
-                            <input class="w3-input w3-border w3-margin-bottom"
-                                type="text"
-                                placeholder="E.g. 30 (mins)"
-                                name="usrname" required>
-                            </span>
+                                <span>
+                                <label>Long Break Length</label>
+                                <input class="w3-input w3-border w3-margin-bottom"
+                                    type="text"
+                                    placeholder="E.g. 30 (mins)"
+                                    name="lbLength" required>
+                                </span>
+
+                                <input type="submit" value="Save">
+                            </form>
                         </div>
+
+                        <span class="fade-border"></span>
+
                         <h3>Course Settings</h3>
-                        <button class="w3-section" type="submit">Save Settings</button>
+                        <form class="course-settings">
+                            <div style="width: 50%">
+                            <label>Course Name</label>
+                            <input class="w3-input w3-border w3-margin-bottom"
+                                    type="text"
+                                    placeholder="Name"
+                                    name="cName" required>
+                            </div>
+
+                            <div style="width: 50%">
+                            <label>Weekly allotted time (in hours)</label>
+                            <input class="w3-input w3-border w3-margin-bottom"
+                                    type="text"
+                                    placeholder="E.g. 5"
+                                    name="cTime" required>
+                            </div>
+
+                            <div style="width: 50%">
+                            <input type=submit value="Add Course">
+                            </div>
+
+                            <div style="width: 50%">
+                            <input type=submit value="Update Course">
+                            </div>
+                        </form>
                     </div>
                 </form>
             </div>
@@ -95,7 +126,8 @@
         <h1>History</h1>
 
         <div class="history-block">
-            <!-- <div class="history"> -->
-        </div>
+            <div class="course">
+                <h3>Math</h3>
+            </div>
     </body>
 </html>
