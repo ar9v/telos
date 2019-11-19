@@ -15,6 +15,12 @@ app.use(morgan('combined'));
 // API
 app.post('/api/register', jsonParser, (req, res) => {
 	let {email, password} = req.body;
+	if(!email || !password) {
+		return res.status(406).json({
+			status: 406,
+			message: "Missing Params"
+		});
+	}
 	bcrypt.hash(password, 10).then(hashPasss => {
 
 		UserList.getByEmail(email).then( response => {
@@ -48,26 +54,31 @@ app.post('/api/login', jsonParser, (req, res) => {
 	let {email, password} = req.body;
 	UserList.getByEmail(email).then( user => {
 		if(user.length == 0) {
-			res.statusMessage = "User or password does not match (U)"
+			res.statusMessage = "User or password is incorrect";
 			return res.status(401).json({
-				message : "User or password does not match (U)",
+				message : "User or password is incorrect",
 				status : 401
 			});
 		}
-		bcrypt.compare(password, user[0].password, function(err, response) {
-			if (err) {
-				res.statusMessage = "User or password does not match (P)"
-				return res.status(401).json({
-					message : "User or password does not match (P)",
-					status : 401
-				});
-			}
-			if (response) {
-				res.status(200).json({
+		bcrypt.compare(password, user[0].password).then( response => {
+			console.log(response);
+			if(response) {
+				return res.status(200).json({
 					message: "Success",
 					status: 201
 				});
 			}
+			res.statusMessage = "User or password is incorrect";
+			return res.status(401).json({
+				message : "User or password is incorrect",
+				status : 401
+			}); 
+		}).catch(err => {
+			res.statusMessage = "Internal Server Error"
+			return res.status(500).json({
+				message : "Internal Server Error",
+				status : 500
+			});	
 		});
 	}).catch( error => {
 		console.log(error);
