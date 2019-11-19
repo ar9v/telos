@@ -43,9 +43,9 @@ app.get('/api/User', jsonParser, (req, res) => {
 });
 
 app.post('/api/createCourse', jsonParser, (req, res) => {
-	let {email, name, allotedTime} = req.body;
+	let {email, name, allottedTime} = req.body;
 
-	UserList.postCourse(email, {name, allotedTime, spentTime: 0}).then(response => {
+	UserList.postCourse(email, {name, allottedTime, spentTime: 0}).then(response => {
 		console.log(response);
 		if(response == 404)  {
 			res.statusMessage = "User not found";
@@ -63,8 +63,8 @@ app.post('/api/createCourse', jsonParser, (req, res) => {
 });
 
 app.put('/api/updateCourse', jsonParser, (req, res) => {
-	let {email, name, allotedTime} = req.body;
-	UserList.putCourse(email, {name, allotedTime}).then( response => {
+	let {email, name, allottedTime} = req.body;
+	UserList.putCourse(email, {name, allottedTime}).then( response => {
 		console.log(response);
 		if(response == 404)  {
 			res.statusMessage = "Course not found";

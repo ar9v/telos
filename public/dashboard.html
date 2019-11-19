@@ -48,7 +48,7 @@
         <div id="config-modal" class="w3-modal">
             <div class="w3-modal-content w3-card-3 w3-animate-top">
                 <header class="w3-container">
-                    <span onclick="document.getElementById('config-modal').style.display='none'"
+                    <span onclick="document.getElementById('config-modal').style.display='none'; loadConfig()"
                           class="w3-button w3-display-topright">&times;</span>
                     <h2>Configuration</h2>
                 </header>
@@ -62,7 +62,7 @@
                                 <input class="w3-input w3-border w3-margin-bottom"
                                     type="text"
                                     placeholder="E.g. 25 (mins)"
-                                    name="pLength" required>
+                                    name="pLength" id="pomoLength" required>
                                 </span>
 
                                 <span class="pField">
@@ -70,7 +70,7 @@
                                 <input class="w3-input w3-border w3-margin-bottom"
                                     type="text"
                                     placeholder="E.g. 5 (mins)"
-                                    name="bLength" required>
+                                    name="bLength" id="bLength" required>
                                 </span>
 
                                 <span class="pField">
@@ -78,7 +78,7 @@
                                 <input class="w3-input w3-border w3-margin-bottom"
                                     type="text"
                                     placeholder="E.g. 30 (mins)"
-                                    name="lbLength" required>
+                                    name="lbLength" id="lbLength" required>
                                 </span>
 
                                 <input type="submit" value="Save">
@@ -94,7 +94,7 @@
                             <input class="w3-input w3-border w3-margin-bottom"
                                     type="text"
                                     placeholder="Name"
-                                    name="cName" required>
+                                    name="cName" id="courseName" required>
                             </div>
 
                             <div style="width: 50%">
@@ -102,15 +102,15 @@
                             <input class="w3-input w3-border w3-margin-bottom"
                                     type="text"
                                     placeholder="E.g. 5"
-                                    name="cTime" required>
+                                    name="cTime" id="allottedTime" required>
                             </div>
 
                             <div style="width: 50%">
-                            <input type=submit value="Add Course">
+                            <input type=submit value="Add Course" id="addCourse">
                             </div>
 
                             <div style="width: 50%">
-                            <input type=submit value="Update Course">
+                            <input type=submit value="Update Course" id="updateCourse">
                             </div>
                         </form>
                     </div>

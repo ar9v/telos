@@ -14,7 +14,7 @@ let historySchema = mongoose.Schema({
 
 let courseSchema = mongoose.Schema({
 	name: { type : String, require : true },
-	allotedTime: { type : Number },
+	allottedTime: { type : Number },
 	spentTime: { type : Number},
 	tasks: [taskSchema]
 });

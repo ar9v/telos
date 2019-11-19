@@ -1,3 +1,4 @@
+// Setup
 var userContext = {
     email: "",
     courses: [],
@@ -14,7 +15,7 @@ var userContext = {
     pomodoroCount: 0
 };
 
-// We must obtain a user's information to populate the dashboard
+//// We must obtain a user's information to populate the dashboard
 $.ajax({
     url: '/api/User',
     data: { email: "aricav96@gmail.com" },
@@ -40,9 +41,9 @@ function setUserContext(mongoUser) {
 
 function populate() {
     setTimer();
-    // loadConfig();
-    // loadCourses();
-    // loadHistory();
+    loadConfig();
+    loadCourses();
+    loadHistory();
 }
 
 function setTimer() {
@@ -58,6 +59,94 @@ function setTimer() {
     $("#timer").text(`${userContext.timer.mins}m ${userContext.timer.sec}s`)
 }
 
-// function loadConfig() {
+function loadConfig() {
+    $("#pomoLength").val(userContext.pomodoro.workLength);
+    $("#bLength").val(userContext.pomodoro.breakLength);
+    $("#lbLength").val(userContext.pomodoro.longBreakLength);
+}
 
-// }
+function createCourseHTML(course) {
+    let cname = $(`<h3>${course.name}</h3>`);
+    let percentage = $(`<span class="percentage">
+                            ${course.spentTime / course.allottedTime * 100}%
+                        </span>`);
+    let progress = $('<div class="progress-bar"></div>');
+    progress.width(`${percentage}%`);
+    let div = $('<div class="course"></div>')
+    div.append(cname, percentage, progress);
+    return div;
+}
+
+function loadCourses() {
+    userContext.courses.forEach(course => $(".courses-display").append(createCourseHTML(course)));
+}
+
+function createHistoryHTML(hist) {
+    let hname = $(`<h3>${hist.name}</h3>`);
+    let msg = $(`<span>Pomodoro Total</span>`);
+    let stat = $(`<span>${hist.pomodoroCount}</span>`);
+    let div = $('<div class="course"></div>')
+    div.append(hname, msg, stat);
+    return div;
+}
+
+function loadHistory() {
+    userContext.history.forEach(hist => $(".history-block").append(createHistoryHTML(hist)));
+}
+
+// Front-end interaction
+$("#addCourse").on("click", (event) => {
+    event.preventDefault();
+
+    let email = userContext.email;
+    let name = $("#courseName").val();
+    let allottedTime = $("#allottedTime").val();
+
+    if(!name || !allottedTime) {
+        window.alert("At least one field is missing. Please try again");
+        return;
+    }
+
+    // Add to userContext
+    let newCourse = {
+        name,
+        allottedTime,
+        spentTime: 0,
+        tasks: []
+    };
+
+    let newHist = {
+        name,
+        pomodoroCount: 0
+    }
+
+    // Upload to database
+    $.ajax({
+        url: '/api/createCourse',
+        contentType: 'application/json',
+        data: JSON.stringify({email, name, allottedTime}),
+        method: "POST",
+        success: function(response) {
+            userContext.courses.push(newCourse);
+            $(".courses-display").append(createCourseHTML(newCourse));
+            addHistory(newHist)
+            window.confirm("The course was created successfully");
+        },
+        error: function(err) {
+            if(err.status == 404)
+                window.alert("The user doesn't exist");
+            else if(err.status == 409)
+                window.alert("The course already exists");
+            else
+                window.alert("Server Error: Please try again later")
+        }
+    });
+});
+
+function addHistory(hist) {
+    // Add it to front-end
+    userContext.history.push(hist);
+    $(".history-block").append(createHistoryHTML(hist));
+
+    // TODO: Upload it to the database
+}
