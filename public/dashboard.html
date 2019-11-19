@@ -21,24 +21,19 @@
         </nav>
 
         <div class="timer-block">
-            <span class="timer">25:00</span>
+            <!-- <span class="timer">25:00</span> -->
+            <span class="timer"></span>
             <button>Start!</button>
         </div>
 
         <h1>Courses</h1>
         <div class="courses-display">
             <!-- <div class="course"> -->
-            <div class="course">
-                <h3>Math</h3>
-                <span class="percentage">88%</span>
-                <div class="progress-bar"></div>
-            </div>
-            
-            <div class="course">
-                <h3>Math</h3>
-                <span class="percentage">88%</span>
-                <div class="progress-bar"></div>
-            </div>
+            <!-- <div class="course">
+                 <h3>Math</h3>
+                 <span class="percentage">88%</span>
+                 <div class="progress-bar"></div>
+                 </div> -->
         </div>
 
         <h1>Course Info</h1>
@@ -57,12 +52,12 @@
                           class="w3-button w3-display-topright">&times;</span>
                     <h2>Configuration</h2>
                 </header>
-                <form class="w3-container" action="/action_page.php">
+                <div class="w3-container">
                     <div class="w3-section">
                         <h3>Pomodoro Settings</h3>
-                        <div class="pomodoro-settings">
-                            <form>
-                                <span>
+                        <div>
+                            <form class="pomodoro-settings">
+                                <span class="pField">
                                 <label>Pomodoro Length</label>
                                 <input class="w3-input w3-border w3-margin-bottom"
                                     type="text"
@@ -70,7 +65,7 @@
                                     name="pLength" required>
                                 </span>
 
-                                <span>
+                                <span class="pField">
                                 <label>Break Length</label>
                                 <input class="w3-input w3-border w3-margin-bottom"
                                     type="text"
@@ -78,7 +73,7 @@
                                     name="bLength" required>
                                 </span>
 
-                                <span>
+                                <span class="pField">
                                 <label>Long Break Length</label>
                                 <input class="w3-input w3-border w3-margin-bottom"
                                     type="text"
@@ -119,16 +114,17 @@
                             </div>
                         </form>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
 
         <h1>History</h1>
 
         <div class="history-block">
-            <div class="course">
-                <h3>Math</h3>
-            </div>
+            <!-- <div class="course">
+                 <h3>Math</h3>
+                 </div> -->
+        </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="js/dashboard.js"></script>

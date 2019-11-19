@@ -4,6 +4,12 @@ $('#signup').on('click', (event) => {
     let email = $("#email").val();
     let password = $("#password").val();
 
+    // Is a field empty?
+    if(!email | !password) {
+        window.alert("A field is empty. Please write both your email and password.")
+        return;
+    }
+
     $.ajax({
         url: '/api/register',
         contentType: 'application/json',

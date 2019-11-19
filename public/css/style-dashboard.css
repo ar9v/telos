@@ -36,6 +36,10 @@ nav {
     flex-wrap: wrap;
 }
 
+.pField {
+    width: 33%;
+}
+
 .course-settings {
     display: flex;
     flex-wrap: wrap;
