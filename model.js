@@ -136,6 +136,24 @@ let UserList = {
 			return error;
 		});
 	},
+	createHistory : function(email, newHist) {
+		return User.find({email: email, 'history.name': newHist.name}).then( userList => {
+			if (userList.length == 0) {
+				return User.findOneAndUpdate({email: email},
+											{$push: {history: newHist}},
+											{ new: true })
+				.then( user => {
+					if (user == null) {
+						return 404;
+					}
+					return user.history[user.history.length - 1];
+				}).catch(error => {
+					throw Error(error);
+				});
+			}
+			return 409;
+		})
+	},
 	updateHistory : function(email, name) {
 		return User.findOneAndUpdate({email: email, 'history.name': name}, 
 									{$inc: {'history.$.pomodoroCount': 1}})

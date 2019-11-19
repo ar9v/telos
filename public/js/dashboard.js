@@ -144,9 +144,27 @@ $("#addCourse").on("click", (event) => {
 });
 
 function addHistory(hist) {
-    // Add it to front-end
-    userContext.history.push(hist);
-    $(".history-block").append(createHistoryHTML(hist));
+    let email = userContext.email;
+    let name = hist.name;
+    let pomodoroCount = hist.pomodoroCount;
 
-    // TODO: Upload it to the database
+    $.ajax({
+        url: '/api/createHistory',
+        contentType: 'application/json',
+        data: JSON.stringify({email, name, pomodoroCount}),
+        method: "POST",
+        success: function(response) {
+            // Add it to front-end
+            userContext.history.push(hist);
+            $(".history-block").append(createHistoryHTML(hist));
+        },
+        error: function(err) {
+            if(err.status == 404)
+                console.log("The user doesn't exist");
+            else if(err.status == 409)
+                console.log("The course history already exists");
+            else
+                console.log("Server Error: Please try again later")
+        }
+    });
 }

@@ -118,6 +118,26 @@ app.put('/api/updatePomodoro', jsonParser, (req, res) => {
 	});
 });
 
+app.post('/api/createHistory', jsonParser, (req, res) => {
+	let {email, name, pomodoroCount} = req.body;
+
+	UserList.createHistory(email, {name, pomodoroCount}).then(response => {
+		console.log(response);
+		if(response == 404)  {
+			res.statusMessage = "User not found";
+			return res.status(404).json({message: "User not found"});
+		}
+		if(response == 409) {
+			res.statusMessage = "History already exists";
+			return res.status(409).json({message: "History already exists"});
+		}
+		return res.status(200).json(response);
+	}).catch( err => {
+		console.log(err);
+		return res.status(500).json(err);
+	})
+});
+
 app.put('/api/updateHistory', jsonParser, (req, res) => {
 	let { email, name } = req.body;
 	UserList.updateHistory(email, name).then( response => {
