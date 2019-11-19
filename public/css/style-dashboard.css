@@ -49,7 +49,7 @@ nav {
     display: flex;
 }
 
-.course {
+.course, .history {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -67,6 +67,7 @@ nav {
     background: #333;
     height: 20em;
     overflow-y: auto;
+    padding: 5px 20px;
 }
 
 .progress-bar {
