@@ -38,9 +38,18 @@
 
         <h1>Course Info</h1>
         <div class="course-details">
-            <div class="task-area">
-            </div>
-            <div class="task-progress">
+            <header id="course-details-head">
+                <h2 id="currentCourse">Course: <span id="actualCourse"></span></h2>
+                <form id="addTaskBar">
+                    <input type="text" id="addTaskText">
+                    <input type="submit" id="addTaskButton" value="Add Task">
+                </form>
+            </header>
+            <div id="course-info">
+                <ul id="task-area">
+                </ul>
+                <div class="task-progress">
+                </div>
             </div>
         </div>
 

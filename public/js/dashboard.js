@@ -85,7 +85,7 @@ function createHistoryHTML(hist) {
     let hname = $(`<h3>${hist.name}</h3>`);
     let msg = $(`<span>Pomodoro Total</span>`);
     let stat = $(`<span>${hist.pomodoroCount}</span>`);
-    let div = $('<div class="course"></div>')
+    let div = $('<div class="history"></div>')
     div.append(hname, msg, stat);
     return div;
 }
@@ -94,13 +94,98 @@ function loadHistory() {
     userContext.history.forEach(hist => $(".history-block").append(createHistoryHTML(hist)));
 }
 
+function fetchContext(courseName) {
+    let result = userContext.courses.filter(course => course.name == courseName);
+    return result[0];
+}
+
+function createTaskHTML(task) {
+    let item = $(`<span> ${task.description} </span>`);
+
+    // Create the li
+    let listItem = $("<li></li>");
+
+    // Create the buttons
+    let deleteButton = $("<button type='button' class='deleteB'>Delete</button>");
+    let checkButton = $("<button type='button' class='checkB'>Done</button>");
+
+    // Putting it all together...
+    listItem.append(deleteButton, checkButton, item);
+
+    return listItem;
+}
+
 // Front-end interaction
+//// Adding propagation of events to child elements
+$(".courses-display").on("click", ".course", function(event) {
+    let courseName = $(this).children("h3").text();
+    let course = fetchContext(courseName);
+
+    // Add the course name
+    $("#actualCourse").text(`${course.name}`);
+
+    // Add the add task bar
+    $("#addTaskBar").css("display", "flex");
+
+    // Clean area
+    $("#task-area").empty();
+
+    // Add the existing tasks
+    course.tasks.forEach(task => $("#task-area").append(createTaskHTML(task)));
+});
+
+$("#addTaskButton").on("click", function(event) {
+    event.preventDefault();
+    let taskText = $("#addTaskText").val();
+    let email = userContext.email;
+    let name = $("#actualCourse").text();
+    let description = taskText;
+    let complete = false;
+
+    $.ajax({
+        url: '/api/createTask',
+        contentType: 'application/json',
+        data: JSON.stringify({email, name, description}),
+        method: 'POST',
+        success: function(response) {
+            let id = response._id;
+            let newTask = {
+                id,
+                description,
+                complete
+            };
+
+            let course = fetchContext(name);
+            course.tasks.push(newTask);
+            $("#task-area").append(createTaskHTML(newTask));
+        },
+        error: function(err) {console.log(err) }
+    });
+});
+
+$("ul").on("click", ".checkB", function(event) {
+    let cssState = $(this).next().css("text-decoration-line");
+    if(cssState === "line-through")
+        $(this).next().css("text-decoration", "");
+    else
+        $(this).next().css("text-decoration", "line-through");
+});
+
+$("ul").on("click", ".deleteB", function(event) {
+    $(this).parent().remove();
+});
+
+//// Adding courses
 $("#addCourse").on("click", (event) => {
     event.preventDefault();
 
     let email = userContext.email;
     let name = $("#courseName").val();
     let allottedTime = $("#allottedTime").val();
+
+    // Clean up the inputs
+    $("#courseName").val("");
+    $("#allottedTime").val("");
 
     if(!name || !allottedTime) {
         window.alert("At least one field is missing. Please try again");
@@ -118,7 +203,7 @@ $("#addCourse").on("click", (event) => {
     let newHist = {
         name,
         pomodoroCount: 0
-    }
+    };
 
     // Upload to database
     $.ajax({
@@ -138,7 +223,7 @@ $("#addCourse").on("click", (event) => {
             else if(err.status == 409)
                 window.alert("The course already exists");
             else
-                window.alert("Server Error: Please try again later")
+                window.alert("Server Error: Please try again later");
         }
     });
 });
