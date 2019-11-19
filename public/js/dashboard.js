@@ -100,7 +100,7 @@ function fetchContext(courseName) {
 }
 
 function createTaskHTML(task) {
-    let item = $(`<span> ${task.description} </span>`);
+    let item = $(`<span>${task.description}</span>`);
 
     // Create the li
     let listItem = $("<li></li>");
@@ -184,7 +184,20 @@ $("ul").on("click", ".checkB", function(event) {
 });
 
 $("ul").on("click", ".deleteB", function(event) {
+    let taskDescription = $(this).siblings("span").text();
     $(this).parent().remove();
+
+    let courseName = $("#actualCourse").text();
+    let course = fetchContext(courseName);
+
+    // Delete from userContext
+    course.tasks = course.tasks.filter(task => task.description != taskDescription);
+    userContext.courses.forEach(c => {
+        if(c.name == courseName)
+            c.tasks = course.tasks;
+    });
+
+    // Delete from mongo
 });
 
 //// Adding courses
