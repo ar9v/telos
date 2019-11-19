@@ -22,6 +22,35 @@ $('#signup').on('click', (event) => {
             else
                 window.confirm("User created successfully");
         },
-        error: function(err) { console.log(err) }
+        error: function(err) {
+            window.alert(err.statusText);
+        }
     });
 });
+
+$('#login').on('click', (event) => {
+    event.preventDefault();
+
+    let email = $("#email").val();
+    let password = $("#password").val();
+
+    // Is a field empty?
+    if(!email | !password) {
+        window.alert("A field is empty. Please write both your email and password.")
+        return;
+    }
+    $.ajax({
+        url: '/api/login',
+        contentType: 'application/json',
+        data: JSON.stringify({email, password}),
+        method: "POST",
+        success: function(response) {
+            sessionStorage.setItem('email', email);
+            window.location.href = '/dashboard';
+        },
+        error: function(err) {
+            window.alert(err.statusText);
+        }
+    })
+})
+

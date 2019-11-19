@@ -13,6 +13,10 @@ app.use(express.static('public'));
 app.use(morgan('combined'));
 
 // API
+app.get('/dashboard', (req, res) => {
+	res.sendFile('/public/dashboard.html', {root: __dirname});
+});
+
 app.post('/api/register', jsonParser, (req, res) => {
 	let {email, password} = req.body;
 	if(!email || !password) {
@@ -61,7 +65,6 @@ app.post('/api/login', jsonParser, (req, res) => {
 			});
 		}
 		bcrypt.compare(password, user[0].password).then( response => {
-			console.log(response);
 			if(response) {
 				return res.status(200).json({
 					message: "Success",
