@@ -3,6 +3,7 @@ let express = require('express');
 let morgan = require('morgan');
 let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
+let bcrypt = require('bcryptjs');
 let { UserList } = require('./model');
 // Setup
 let app = express();
@@ -14,19 +15,67 @@ app.use(morgan('combined'));
 // API
 app.post('/api/register', jsonParser, (req, res) => {
 	let {email, password} = req.body;
+	bcrypt.hash(password, 10).then(hashPasss => {
 
-	//Initialize Pomodoro
-	let pomodoro  = {
-		workLength: 25,
-		breakLength: 5,
-		longBreakLength: 30
-	};
-	UserList.postUser({email, password, pomodoro}).then(user => {
-		console.log(user);
-		return res.status(200).json(user);
+		UserList.getByEmail(email).then( response => {
+			if(response.length == 0) {
+				//Initialize Pomodoro
+				let pomodoro  = {
+					workLength: 25,
+					breakLength: 5,
+					longBreakLength: 30
+				};
+				console.log(hashPasss);
+				UserList.postUser({email, password: hashPasss, pomodoro}).then(user => {
+					console.log(user);
+					return res.status(200).json(user);
+				}).catch(err => {
+					console.log(err);
+					return res.status(500).json(err);
+				});
+			} else {
+				return res.status(409).json({message: "User Already Exists"});
+			}
+		}).catch( err => {
+			return res.status(500).json({message: "Internal Server Error"});
+		})
 	}).catch(err => {
-		console.log(err);
-		return res.status(500).json(err);
+		return res.status(500).json({message: "Internal Server Error"});
+	})
+});
+
+app.post('/api/login', jsonParser, (req, res) => {
+	let {email, password} = req.body;
+	UserList.getByEmail(email).then( user => {
+		if(user.length == 0) {
+			res.statusMessage = "User or password does not match (U)"
+			return res.status(401).json({
+				message : "User or password does not match (U)",
+				status : 401
+			});
+		}
+		bcrypt.compare(password, user[0].password, function(err, response) {
+			if (err) {
+				res.statusMessage = "User or password does not match (P)"
+				return res.status(401).json({
+					message : "User or password does not match (P)",
+					status : 401
+				});
+			}
+			if (response) {
+				res.status(200).json({
+					message: "Success",
+					status: 201
+				});
+			}
+		});
+	}).catch( error => {
+		console.log(error);
+		res.statusMessage = "Internal Server Error"
+		return res.status(500).json({
+			message : "Internal Server Error",
+			status : 500
+		});
 	});
 });
 
