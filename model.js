@@ -29,7 +29,7 @@ let usersSchema = mongoose.Schema({
 	email: { type : String, require : true },
 	password: { type : String, require : true },
 	courses: [courseSchema],
-	history: historySchema,
+	history: [historySchema],
 	pomodoro: pomodoroSchema
 });
 

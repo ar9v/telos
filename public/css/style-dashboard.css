@@ -67,8 +67,9 @@ nav {
 
 .progress-bar {
     background: whitesmoke;
-    width: 100%;
+    width: 88%;
     height: 2px;
+    align-self: flex-start;
 }
 
 .history-block {

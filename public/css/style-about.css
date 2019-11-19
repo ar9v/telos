@@ -36,6 +36,7 @@ footer {
 footer > a {
     background: none;
     border: none;
+    margin: 0;
 }
 
 .fade-border {
