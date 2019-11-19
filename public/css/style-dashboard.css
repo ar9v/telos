@@ -17,7 +17,7 @@ li {
 }
 
 li > button {
-    width: 5%;
+    width: 10%;
 }
 
 .timer-block {
@@ -79,7 +79,7 @@ li > button {
     padding: 5px 20px;
 }
 
-.course-info {
+#course-info {
     display: flex;
 }
 
@@ -118,4 +118,9 @@ li > button {
 #task-area {
     list-style: none;
     padding: 0;
+    width: 50%;
+}
+
+#course-specifics {
+    width: 50%;
 }

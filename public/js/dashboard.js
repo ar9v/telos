@@ -115,6 +115,14 @@ function createTaskHTML(task) {
     return listItem;
 }
 
+function createCourseInfo(course) {
+    $("#course-specifics").empty();
+    let cname = $(`<h2>Course Stats</h2>`);
+    let allottedTime = $(`<h3>Allotted Time: ${course.allottedTime}</h3>`);
+    let totalTasks = $(`<h4>Total Tasks: ${course.tasks.length}</h4>`);
+    $("#course-specifics").append(cname, allottedTime, totalTasks);
+}
+
 // Front-end interaction
 //// Adding propagation of events to child elements
 $(".courses-display").on("click", ".course", function(event) {
@@ -132,6 +140,9 @@ $(".courses-display").on("click", ".course", function(event) {
 
     // Add the existing tasks
     course.tasks.forEach(task => $("#task-area").append(createTaskHTML(task)));
+
+    // Add the course information
+    createCourseInfo(course);
 });
 
 $("#addTaskButton").on("click", function(event) {
@@ -141,6 +152,7 @@ $("#addTaskButton").on("click", function(event) {
     let name = $("#actualCourse").text();
     let description = taskText;
     let complete = false;
+    $("#addTaskText").val("");
 
     $.ajax({
         url: '/api/createTask',
