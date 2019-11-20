@@ -15,6 +15,8 @@ var userContext = {
     pomodoroCount: 0
 };
 
+var pomodoroCycle = 1;
+
 let email = window.sessionStorage.getItem("email");
 if(!email) {
     window.alert("Please log in.");
@@ -46,23 +48,37 @@ function setUserContext(mongoUser) {
 }
 
 function populate() {
-    setTimer();
+    setPomodoro();
     loadConfig();
     loadCourses();
     loadHistory();
 }
 
-function setTimer() {
-    let cycleState = userContext.pomodoroCount % 8;
+function setPomodoro() {
+    console.log('Podomoro Cycle:' + pomodoroCycle);
+    var Timer = $('#timer');
+    var time = 0;
+    let cycle = pomodoroCycle % 8;
+    if(cycle == 0) {
+        //Long Break
+        time = userContext.pomodoro.longBreakLength;
+        //Do something else because you reached the end.
+    } else if(cycle % 2 == 1) {
+        //Work Time
+        time = userContext.pomodoro.workLength;
+    } else {
+        //Short Break
+        time = userContext.pomodoro.breakLength;
+    }
+    
+    var Minutes = time;
+    var Seconds = 0;
+        
+    Timer.html( 
+        (Minutes < 10 ? '0' : '') + Minutes 
+        + ':' 
+        + (Seconds < 10 ? '0' : '') + Seconds );
 
-    if(cycleState == 7)
-        userContext.timer.mins = userContext.pomodoro.longBreakLength;
-    else if(cycleState % 2 == 0)
-        userContext.timer.mins = userContext.pomodoro.workLength;
-    else
-        userContext.timer.mins = userContext.pomodoro.breakLength;
-
-    $("#timer").text(`${userContext.timer.mins}m ${userContext.timer.sec}s`)
 }
 
 function loadConfig() {
@@ -341,3 +357,101 @@ function addHistory(hist) {
         }
     });
 }
+
+// Pomodoro timer Logic
+var CountDown = (function ($) {
+    // Length ms 
+    var TimeOut = 10000;
+    // Interval ms
+    var TimeGap = 1000;
+    
+    var CurrentTime = ( new Date() ).getTime();
+    var EndTime = ( new Date() ).getTime() + TimeOut;
+    
+    var Timer = $('#timer');
+    var StartB = $('#start');
+    var StopB = $('#stop').hide();
+    
+    var Running = false;
+    
+    var UpdateTimer = function() {
+        // Run till timeout
+        if( CurrentTime + TimeGap < EndTime ) {
+            setTimeout( UpdateTimer, TimeGap );
+        }
+        // Countdown if running
+        if( Running ) {
+            CurrentTime += TimeGap;
+            if( CurrentTime >= EndTime ) {
+                //Timer stoped do something.
+                Running = false;
+                StopB.hide();
+                StartB.show();
+                pomodoroCycle = pomodoroCycle + 1;
+                setPomodoro();
+            } else {
+                // Update Gui
+                var Time = new Date();
+                Time.setTime( EndTime - CurrentTime );
+                var Minutes = Time.getMinutes();
+                var Seconds = Time.getSeconds();
+                
+                Timer.html( 
+                    (Minutes < 10 ? '0' : '') + Minutes 
+                    + ':' 
+                    + (Seconds < 10 ? '0' : '') + Seconds );
+            }
+        }
+    };
+    
+    var Stop = function() {
+        Running = false;
+        StopB.hide();
+        StartB.show();
+    };
+
+    var Start = function( Timeout ) {
+        TimeOut = Timeout * 1000 * 60;
+        CurrentTime = ( new Date() ).getTime();
+        EndTime = ( new Date() ).getTime() + TimeOut;
+        Running = true;
+        StopB.show();
+        StartB.hide();
+    }
+    
+    var StartTimer = function( Timeout ) {
+        TimeOut = Timeout * 1000 * 60;
+        CurrentTime = ( new Date() ).getTime();
+        EndTime = ( new Date() ).getTime() + TimeOut;
+        UpdateTimer();
+    };
+
+    return {
+        Stop: Stop,
+        Start: Start,
+        StartTimer: StartTimer
+    };
+})(jQuery);
+
+$('#stop').on('click', function() {
+    CountDown.Stop();
+    pomodoroCycle = 1;
+    setPomodoro();
+});
+$('#start').on('click', function() {
+    var time = 0;
+    let cycle = pomodoroCycle % 8;
+    if(cycle == 0) {
+        //Long Break
+        time = userContext.pomodoro.longBreakLength;
+    } else if(cycle % 2 == 1) {
+        //Work Time
+        time = userContext.pomodoro.workLength;
+    } else {
+        //Short Break
+        time = userContext.pomodoro.breakLength;
+    }
+    CountDown.Start(time);
+});
+
+CountDown.StartTimer(1000);
