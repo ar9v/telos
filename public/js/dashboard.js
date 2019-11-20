@@ -15,10 +15,16 @@ var userContext = {
     pomodoroCount: 0
 };
 
+let email = window.sessionStorage.getItem("email");
+if(!email) {
+    window.alert("Please log in.");
+    window.location.href = '/';
+};
+
 //// We must obtain a user's information to populate the dashboard
 $.ajax({
     url: '/api/User',
-    data: { email: "aricav96@gmail.com" },
+    data: { email: email },
     dataType: "json",
     method: "GET",
     success: function(response) {
