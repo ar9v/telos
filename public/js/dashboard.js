@@ -15,7 +15,8 @@ var userContext = {
     pomodoroCount: 0
 };
 
-var pomodoroCycle = 1;
+let pomodoroCycle = 1;
+let pomodoroTimer;
 
 let email = window.sessionStorage.getItem("email");
 if(!email) {
@@ -62,13 +63,14 @@ function setPomodoro() {
     if(cycle == 0) {
         //Long Break
         time = userContext.pomodoro.longBreakLength;
-        //Do something else because you reached the end.
+        //Add time and counter to current course
     } else if(cycle % 2 == 1) {
         //Work Time
         time = userContext.pomodoro.workLength;
     } else {
         //Short Break
         time = userContext.pomodoro.breakLength;
+        //Add time and counter to current course
     }
     
     var Minutes = time;
@@ -94,16 +96,17 @@ function createCourseHTML(course) {
                       </span>'`);
     let cname = $(`<h3>${course.name}</h3>`);
     let percentage = $(`<span class="percentage">
-                            ${course.spentTime / course.allottedTime * 100}%
+                            ${(course.spentTime / (course.allottedTime * 60) * 100).toFixed(2)}%
                         </span>`);
     let progress = $('<div class="progress-bar"></div>');
-    progress.width(`${percentage}%`);
+    progress.width(course.spentTime / (course.allottedTime * 60) * 100 + '%');
     let div = $('<div class="course w3-animate-opacity"></div>')
     div.append(header, cname, percentage, progress);
     return div;
 }
 
 function loadCourses() {
+    $(".courses-display").empty();
     userContext.courses.forEach(course => $(".courses-display").append(createCourseHTML(course)));
 }
 
@@ -121,11 +124,17 @@ function createHistoryHTML(hist) {
 }
 
 function loadHistory() {
+    $(".history-block").empty();
     userContext.history.forEach(hist => $(".history-block").append(createHistoryHTML(hist)));
 }
 
 function fetchContext(courseName) {
     let result = userContext.courses.filter(course => course.name == courseName);
+    return result[0];
+}
+function fetchContextH(courseName) {
+    let result = userContext.history.filter(h => h.name == courseName);
+    console.log(result[0]);
     return result[0];
 }
 
@@ -164,6 +173,14 @@ function createCourseInfo(course) {
 }
 
 // Front-end interaction
+
+/// Logout
+$("#logout").on("click", event => {
+    sessionStorage.removeItem("email");
+    window.location.href = "/";
+})
+
+
 //// Adding propagation of events to child elements
 //// Population of course area
 $(".courses-display").on("click", ".course", function(event) {
@@ -240,7 +257,7 @@ $("ul").on("click", ".checkB", function(event) {
         if(t._id == _id)
             return {_id: _id, description: t.description, complete: complete}
         else
-            return {_id: t._id, description: t.description, complete: t.complete}
+            return t
     });
 
     userContext.courses.forEach(c => {
@@ -341,6 +358,58 @@ $("#addCourse").on("click", (event) => {
     });
 });
 
+function updateCourse(email, course) {
+}
+
+$("#updateCourse").on("click", event => {
+    event.preventDefault();
+
+    let email = userContext.email;
+    let name = $("#courseName").val();
+    let allottedTime = $("#allottedTime").val();
+
+    // Clean up the inputs
+    $("#courseName").val("");
+    $("#allottedTime").val("");
+
+
+    if(!name || !allottedTime) {
+        window.alert("At least one field is missing. Please try again");
+        return;
+    }
+    let updatedCourse = fetchContext(name);
+    updatedCourse.allottedTime = allottedTime;
+
+    //Update User Context
+    userContext.courses = userContext.courses.map(c => {
+        if(c.name == name) 
+            return updatedCourse;
+        else
+            return c
+    });
+
+    // Update in Database
+    $.ajax({
+        url: '/api/updateCourse',
+        contentType: 'application/JSON',
+        data: JSON.stringify({email, course: updatedCourse}),
+        method: "PUT",
+        success: function(response) {
+            loadCourses();
+            window.alert("The course was updated successfully");
+        },
+        error: function(err) {
+            if(err.status == 404)
+                window.alert("The user doesn't exist");
+            else if(err.status == 409)
+                window.alert("The course already exists");
+            else
+                window.alert("Server Error: Please try again later");
+        }
+    });
+
+})
+
 $(".courses-display").on("click", ".delCourse", function(event) {
     event.stopPropagation();
     let courseName = $(this).parent().parent().children("h3").text();
@@ -367,6 +436,10 @@ $(".courses-display").on("click", ".delCourse", function(event) {
 $(".history-block").on("click", ".delCourse", function(event) {
     event.stopPropagation();
     let courseName = $(this).parent().parent().children("h3").text();
+    if(fetchContext(courseName)) {
+        window.alert("Can't delete the history of an existing course");
+        return;
+    }
 
     // Remove from userContext
     userContext.history = userContext.history.filter(h => h.name != courseName);
@@ -413,88 +486,22 @@ function addHistory(hist) {
     });
 }
 
-// Pomodoro timer Logic
-var CountDown = (function ($) {
-    // Length ms 
-    var TimeOut = 10000;
-    // Interval ms
-    var TimeGap = 1000;
-    
-    var CurrentTime = ( new Date() ).getTime();
-    var EndTime = ( new Date() ).getTime() + TimeOut;
-    
-    var Timer = $('#timer');
-    var StartB = $('#start');
-    var StopB = $('#stop').hide();
-    
-    var Running = false;
-    
-    var UpdateTimer = function() {
-        // Run till timeout
-        if( CurrentTime + TimeGap < EndTime ) {
-            setTimeout( UpdateTimer, TimeGap );
-        }
-        // Countdown if running
-        if( Running ) {
-            CurrentTime += TimeGap;
-            if( CurrentTime >= EndTime ) {
-                //Timer stoped do something.
-                Running = false;
-                StopB.hide();
-                StartB.show();
-                pomodoroCycle = pomodoroCycle + 1;
-                setPomodoro();
-            } else {
-                // Update Gui
-                var Time = new Date();
-                Time.setTime( EndTime - CurrentTime );
-                var Minutes = Time.getMinutes();
-                var Seconds = Time.getSeconds();
-                
-                Timer.html( 
-                    (Minutes < 10 ? '0' : '') + Minutes 
-                    + ':' 
-                    + (Seconds < 10 ? '0' : '') + Seconds );
-            }
-        }
-    };
-    
-    var Stop = function() {
-        Running = false;
-        StopB.hide();
-        StartB.show();
-    };
-
-    var Start = function( Timeout ) {
-        TimeOut = Timeout * 1000 * 60;
-        CurrentTime = ( new Date() ).getTime();
-        EndTime = ( new Date() ).getTime() + TimeOut;
-        Running = true;
-        StopB.show();
-        StartB.hide();
-    }
-    
-    var StartTimer = function( Timeout ) {
-        TimeOut = Timeout * 1000 * 60;
-        CurrentTime = ( new Date() ).getTime();
-        EndTime = ( new Date() ).getTime() + TimeOut;
-        UpdateTimer();
-    };
-
-    return {
-        Stop: Stop,
-        Start: Start,
-        StartTimer: StartTimer
-    };
-})(jQuery);
-
 $('#stop').on('click', function() {
-    CountDown.Stop();
-    pomodoroCycle = 1;
+    let StartB = $('#start').show();
+    let StopB = $('#stop').hide();
+    clearInterval(pomodoroTimer);
     setPomodoro();
 });
+
 $('#start').on('click', function() {
-    var time = 0;
+    if(!$('#actualCourse').text()) {
+        window.alert("Please select a course.");
+        return;
+    }
+    let Timer = $('#timer');
+    let StartB = $('#start').hide();
+    let StopB = $('#stop').show();
+    let time = 0;
     let cycle = pomodoroCycle % 8;
     if(cycle == 0) {
         //Long Break
@@ -506,21 +513,89 @@ $('#start').on('click', function() {
         //Short Break
         time = userContext.pomodoro.breakLength;
     }
-    CountDown.Start(time);
-});
+    time = time * 1000 * 60;
+    //Actual Timer Start
+    pomodoroTimer = setInterval(function() {
+        if(time <= 0){
+            clearInterval(pomodoroTimer);
+            //Do something
+            StartB.show();
+            StopB.hide();
+            pomodoroCycle = pomodoroCycle + 1;
+            setPomodoro();
+            //Update Courses
+            if(cycle % 2 == 1) {
+                let courseName = $('#actualCourse').text();
+                let course = fetchContext(courseName);
+                course.spentTime = course.spentTime + userContext.pomodoro.workLength;
 
-CountDown.StartTimer(1000);
+                userContext.courses = userContext.courses.map(c => {
+                    if(c.name == courseName)
+                        return course
+                    else
+                        return c
+                });
+                
+                $.ajax({
+                    url: '/api/updateCourse',
+                    contentType: 'application/JSON',
+                    data: JSON.stringify({email, course}),
+                    method: "PUT",
+                    success: function(response) {
+                        loadCourses();
+
+                        // Update History
+                        historyResult = fetchContextH(courseName);
+                        console.log(historyResult);
+                        historyResult.pomodoroCount = historyResult.pomodoroCount + 1;
+
+                        userContext.history = userContext.history.map(h => {
+                            if(h.name == courseName)
+                                return historyResult;
+                            else
+                                return h
+                        });
+
+                        $.ajax({
+                            url: '/api/updateHistory',
+                            contentType: 'application/JSON',
+                            data: JSON.stringify({email, name: historyResult.name, pomodoroCount: historyResult.pomodoroCount}),
+                            method: "PUT",
+                            success: response => {
+                                loadHistory();
+                            },
+                            error: err => {
+                                window.alert("Server Error: Please try again later");
+                            }
+                        })
+
+                    },
+                    error: function(err) {
+                        window.alert("Server Error: Please try again later");
+                    }
+                });
+            }
+        } else {
+            time = time - 1000;
+            let Minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+            let Seconds = Math.floor((time % (1000 * 60)) / 1000);
+                
+            Timer.html( (Minutes < 10 ? '0' : '') + Minutes + ':' + (Seconds < 10 ? '0' : '') + Seconds );
+        }
+    },1000)
+});
 
 //// Updating pomodoro settings
 $("#savePomodoro").on("click", function(event) {
     event.preventDefault();
 
     let email = userContext.email;
-    let workLength = $("#pomoLength").val();
-    let breakLength = $("#bLength").val();
-    let longBreakLength = $("#lbLength").val();
+    let workLength = parseInt($("#pomoLength").val());
+    let breakLength = parseInt($("#bLength").val());
+    let longBreakLength = parseInt($("#lbLength").val());
 
     let pomodoro = {workLength, breakLength, longBreakLength};
+    console.log(pomodoro);
 
     // update userContext
     userContext.pomodoro = pomodoro;

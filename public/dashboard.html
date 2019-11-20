@@ -13,7 +13,7 @@
     </head>
     <body class="w3-animate-left">
         <nav>
-            <button class="navi-button">Logout</button>
+            <button class="navi-button" id="logout">Logout</button>
             <button class="navi-button"
                     onclick="document.getElementById('config-modal').style.display='block'">
                 Configuration
@@ -24,7 +24,7 @@
             <!-- <span class="timer">25:00</span> -->
             <span id="timer"></span>
             <button id="start">Start!</button>
-            <button id="stop" class="deleteB">Stop!</button>
+            <button id="stop" class="deleteB" hidden="true">Stop!</button>
         </div>
 
         <h1>Courses</h1>
