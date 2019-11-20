@@ -33,11 +33,18 @@ a:hover, button:hover, input[type=submit]:hover {
 }
 
 input[type=text], input[type=password] {
-    background: gainsboro;
-    border: solid 1px gainsboro;
-    color: #222;
+    background: none;
+    border: none;
+    border-bottom: solid 1px gainsboro;
+    color: whitesmoke;
     padding: 5px;
     font-family: 'Fira Sans', sans-serif;
+}
+
+.w3-input:invalid {
+    border: none;
+    border-bottom: solid 1px #cf5353;
+    box-shadow: none;
 }
 
 nav {

@@ -155,11 +155,11 @@ function createTaskHTML(task) {
 function createCourseInfo(course) {
     $("#course-specifics").empty();
     let cname = $(`<h2>Course Stats</h2>`);
-    let allottedTime = $(`<h3>Allotted Time: ${course.allottedTime}</h3>`);
-    let totalTasks = $(`<h4>Total Tasks: ${course.tasks.length}</h4>`);
+    let allottedTime = $(`<h3>Allotted Time: ${course.allottedTime} hours</h3>`);
+    let totalTasks = $(`<h4>Total Tasks: ${course.tasks.length} tasks</h4>`);
 
     let completed = course.tasks.filter(task => task.complete != false);
-    let completedTasks = $(`<h4>Completed Tasks: ${completed.length}</h4>`);
+    let completedTasks = $(`<h4>Completed Tasks: ${completed.length} done</h4>`);
     $("#course-specifics").append(cname, allottedTime, totalTasks, completedTasks);
 }
 

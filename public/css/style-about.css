@@ -16,6 +16,11 @@ figure {
     text-align: center;
 }
 
+p {
+    font-size: initial;
+    text-align: justify;
+}
+
 .text {
     width: 50%;
     display: flex;
@@ -48,4 +53,12 @@ footer > a {
     background: #222;
     /* background: -webkit-gradient(radial, 10% 10%, 0, 50% 50%, 360, from(whitesmoke), to(#222)); */
     background: -webkit-radial-gradient(whitesmoke, #222 60%);
+}
+
+.txtref {
+    background: none;
+    border: none;
+    margin: 0;
+    width: auto;
+    text-decoration: underline;
 }
