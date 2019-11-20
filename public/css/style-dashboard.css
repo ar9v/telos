@@ -14,10 +14,12 @@ nav {
 
 li {
     margin: 20px;
+    display: flex;
 }
 
 li > button {
-    width: 10%;
+    width: 80px;
+    flex-shrink: 0;
 }
 
 .timer-block {
@@ -84,6 +86,7 @@ li > button {
     border-color: #cf5353;
 }
 
+
 #course-info {
     display: flex;
 }
@@ -97,6 +100,11 @@ li > button {
 
 .history-block {
     display: flex;
+}
+
+.item {
+    font-size: 20px;
+    flex-grow: 0;
 }
 
 .w3-input {

@@ -106,7 +106,14 @@ function fetchContext(courseName) {
 }
 
 function createTaskHTML(task) {
-    let item = $(`<span id=${task._id}>${task.description}</span>`);
+    let item = $(`<span class="item" id=${task._id}>${task.description}</span>`);
+
+    if(task.complete) {
+        item.css("text-decoration", "line-through");
+    }
+    else {
+        item.css("text-decoration", "");
+    }
 
     // Create the li
     let listItem = $("<li></li>");
@@ -126,7 +133,10 @@ function createCourseInfo(course) {
     let cname = $(`<h2>Course Stats</h2>`);
     let allottedTime = $(`<h3>Allotted Time: ${course.allottedTime}</h3>`);
     let totalTasks = $(`<h4>Total Tasks: ${course.tasks.length}</h4>`);
-    $("#course-specifics").append(cname, allottedTime, totalTasks);
+
+    let completed = course.tasks.filter(task => task.complete != false);
+    let completedTasks = $(`<h4>Completed Tasks: ${completed.length}</h4>`);
+    $("#course-specifics").append(cname, allottedTime, totalTasks, completedTasks);
 }
 
 // Front-end interaction
@@ -184,10 +194,44 @@ $("#addTaskButton").on("click", function(event) {
 
 $("ul").on("click", ".checkB", function(event) {
     let cssState = $(this).next().css("text-decoration-line");
-    if(cssState === "line-through")
+    let _id = $(this).next().attr("id");
+    let email = userContext.email;
+    let name = $("#actualCourse").text();
+    let course = fetchContext(name);
+    let complete = false;
+
+    if(cssState === "line-through") {
         $(this).next().css("text-decoration", "");
-    else
+    }
+    else {
         $(this).next().css("text-decoration", "line-through");
+        complete = true;
+    }
+
+    // Frontend
+    // course.tasks = course.tasks.filter(t => t._id == _id);
+    // course.tasks[0].complete = complete;
+    course.tasks = course.tasks.map(t => {
+        if(t._id == _id)
+            return {_id: _id, description: t.description, complete: complete}
+        else
+            return {_id: t._id, description: t.description, complete: t.complete}
+    });
+
+    userContext.courses.forEach(c => {
+        if(c.name == name)
+            c.tasks = course.tasks;
+    });
+
+    // Backend
+    $.ajax({
+        url: '/api/updateTask',
+        contentType: 'application/json',
+        data: JSON.stringify({email, name, task: {_id, complete}}),
+        method: "PUT",
+    });
+
+    createCourseInfo(course);
 });
 
 $("ul").on("click", ".deleteB", function(event) {

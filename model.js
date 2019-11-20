@@ -119,6 +119,14 @@ let UserList = {
 			return error;
 		})
 	},
+	updateTask: function(email, courseName, task) {
+		console.log(task);
+		return User.updateOne({email, 'courses.name': courseName},
+						   {$set: {"courses.$[cname].tasks.$[task].complete": task.complete}},
+						   {arrayFilters: [{"cname.name": courseName}, {"task._id": task._id}]})
+				   .then(response => response)
+				   .catch(error => error);
+	},
 	updatePomodoro : function(email, pomodoro) {
 		//Programtically create the set object
 		// var set = {};
