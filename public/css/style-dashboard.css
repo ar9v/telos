@@ -79,6 +79,11 @@ li > button {
     padding: 5px 20px;
 }
 
+.deleteB {
+    background: #cf5353;
+    border-color: #cf5353;
+}
+
 #course-info {
     display: flex;
 }

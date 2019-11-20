@@ -78,7 +78,7 @@ function createCourseHTML(course) {
                         </span>`);
     let progress = $('<div class="progress-bar"></div>');
     progress.width(`${percentage}%`);
-    let div = $('<div class="course"></div>')
+    let div = $('<div class="course w3-animate-opacity"></div>')
     div.append(cname, percentage, progress);
     return div;
 }
@@ -176,6 +176,7 @@ $("#addTaskButton").on("click", function(event) {
             let course = fetchContext(name);
             course.tasks.push(newTask);
             $("#task-area").append(createTaskHTML(newTask));
+            createCourseInfo(course);
         },
         error: function(err) {console.log(err) }
     });
@@ -202,6 +203,7 @@ $("ul").on("click", ".deleteB", function(event) {
         if(c.name == name)
             c.tasks = course.tasks;
     });
+    createCourseInfo(course);
 
     let email = userContext.email;
     // Delete from mongo
