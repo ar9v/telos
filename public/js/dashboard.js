@@ -124,11 +124,17 @@ function createHistoryHTML(hist) {
 }
 
 function loadHistory() {
+    $(".history-block").empty();
     userContext.history.forEach(hist => $(".history-block").append(createHistoryHTML(hist)));
 }
 
 function fetchContext(courseName) {
     let result = userContext.courses.filter(course => course.name == courseName);
+    return result[0];
+}
+function fetchContextH(courseName) {
+    let result = userContext.history.filter(h => h.name == courseName);
+    console.log(result[0]);
     return result[0];
 }
 
@@ -521,14 +527,35 @@ $('#start').on('click', function() {
                     method: "PUT",
                     success: function(response) {
                         loadCourses();
+
+                        // Update History
+                        historyResult = fetchContextH(courseName);
+                        console.log(historyResult);
+                        historyResult.pomodoroCount = historyResult.pomodoroCount + 1;
+
+                        userContext.history = userContext.history.map(h => {
+                            if(h.name == courseName)
+                                return historyResult;
+                            else
+                                return h
+                        });
+
+                        $.ajax({
+                            url: '/api/updateHistory',
+                            contentType: 'application/JSON',
+                            data: JSON.stringify({email, name: historyResult.name, pomodoroCount: historyResult.pomodoroCount}),
+                            method: "PUT",
+                            success: response => {
+                                loadHistory();
+                            },
+                            error: err => {
+                                window.alert("Server Error: Please try again later");
+                            }
+                        })
+
                     },
                     error: function(err) {
-                        if(err.status == 404)
-                            window.alert("The user doesn't exist");
-                        else if(err.status == 409)
-                            window.alert("The course already exists");
-                        else
-                            window.alert("Server Error: Please try again later");
+                        window.alert("Server Error: Please try again later");
                     }
                 });
             }
