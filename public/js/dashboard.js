@@ -15,7 +15,8 @@ var userContext = {
     pomodoroCount: 0
 };
 
-var pomodoroCycle = 1;
+let pomodoroCycle = 1;
+let pomodoroTimer;
 
 let email = window.sessionStorage.getItem("email");
 if(!email) {
@@ -62,13 +63,14 @@ function setPomodoro() {
     if(cycle == 0) {
         //Long Break
         time = userContext.pomodoro.longBreakLength;
-        //Do something else because you reached the end.
+        //Add time and counter to current course
     } else if(cycle % 2 == 1) {
         //Work Time
         time = userContext.pomodoro.workLength;
     } else {
         //Short Break
         time = userContext.pomodoro.breakLength;
+        //Add time and counter to current course
     }
     
     var Minutes = time;
@@ -94,16 +96,17 @@ function createCourseHTML(course) {
                       </span>'`);
     let cname = $(`<h3>${course.name}</h3>`);
     let percentage = $(`<span class="percentage">
-                            ${course.spentTime / course.allottedTime * 100}%
+                            ${(course.spentTime / course.allottedTime * 100).toFixed(2)}%
                         </span>`);
     let progress = $('<div class="progress-bar"></div>');
-    progress.width(`${percentage}%`);
+    progress.width(course.spentTime / course.allottedTime * 100 + '%');
     let div = $('<div class="course w3-animate-opacity"></div>')
     div.append(header, cname, percentage, progress);
     return div;
 }
 
 function loadCourses() {
+    $(".courses-display").empty();
     userContext.courses.forEach(course => $(".courses-display").append(createCourseHTML(course)));
 }
 
@@ -240,7 +243,7 @@ $("ul").on("click", ".checkB", function(event) {
         if(t._id == _id)
             return {_id: _id, description: t.description, complete: complete}
         else
-            return {_id: t._id, description: t.description, complete: t.complete}
+            return t
     });
 
     userContext.courses.forEach(c => {
@@ -413,88 +416,18 @@ function addHistory(hist) {
     });
 }
 
-// Pomodoro timer Logic
-var CountDown = (function ($) {
-    // Length ms 
-    var TimeOut = 10000;
-    // Interval ms
-    var TimeGap = 1000;
-    
-    var CurrentTime = ( new Date() ).getTime();
-    var EndTime = ( new Date() ).getTime() + TimeOut;
-    
-    var Timer = $('#timer');
-    var StartB = $('#start');
-    var StopB = $('#stop').hide();
-    
-    var Running = false;
-    
-    var UpdateTimer = function() {
-        // Run till timeout
-        if( CurrentTime + TimeGap < EndTime ) {
-            setTimeout( UpdateTimer, TimeGap );
-        }
-        // Countdown if running
-        if( Running ) {
-            CurrentTime += TimeGap;
-            if( CurrentTime >= EndTime ) {
-                //Timer stoped do something.
-                Running = false;
-                StopB.hide();
-                StartB.show();
-                pomodoroCycle = pomodoroCycle + 1;
-                setPomodoro();
-            } else {
-                // Update Gui
-                var Time = new Date();
-                Time.setTime( EndTime - CurrentTime );
-                var Minutes = Time.getMinutes();
-                var Seconds = Time.getSeconds();
-                
-                Timer.html( 
-                    (Minutes < 10 ? '0' : '') + Minutes 
-                    + ':' 
-                    + (Seconds < 10 ? '0' : '') + Seconds );
-            }
-        }
-    };
-    
-    var Stop = function() {
-        Running = false;
-        StopB.hide();
-        StartB.show();
-    };
-
-    var Start = function( Timeout ) {
-        TimeOut = Timeout * 1000 * 60;
-        CurrentTime = ( new Date() ).getTime();
-        EndTime = ( new Date() ).getTime() + TimeOut;
-        Running = true;
-        StopB.show();
-        StartB.hide();
-    }
-    
-    var StartTimer = function( Timeout ) {
-        TimeOut = Timeout * 1000 * 60;
-        CurrentTime = ( new Date() ).getTime();
-        EndTime = ( new Date() ).getTime() + TimeOut;
-        UpdateTimer();
-    };
-
-    return {
-        Stop: Stop,
-        Start: Start,
-        StartTimer: StartTimer
-    };
-})(jQuery);
-
 $('#stop').on('click', function() {
-    CountDown.Stop();
-    pomodoroCycle = 1;
+    let StartB = $('#start').show();
+    let StopB = $('#stop').hide();
+    clearInterval(pomodoroTimer);
     setPomodoro();
 });
+
 $('#start').on('click', function() {
-    var time = 0;
+    let Timer = $('#timer');
+    let StartB = $('#start').hide();
+    let StopB = $('#stop').show();
+    let time = 0;
     let cycle = pomodoroCycle % 8;
     if(cycle == 0) {
         //Long Break
@@ -506,21 +439,51 @@ $('#start').on('click', function() {
         //Short Break
         time = userContext.pomodoro.breakLength;
     }
-    CountDown.Start(time);
-});
+    time = time * 1000 * 60;
+    //Actual Timer Start
+    pomodoroTimer = setInterval(function() {
+        if(time <= 0){
+            clearInterval(pomodoroTimer);
+            //Do something
+            StartB.show();
+            StopB.hide();
+            pomodoroCycle = pomodoroCycle + 1;
+            setPomodoro();
+            //Update Courses
+            if(cycle % 2 == 1) {
+                let courseName = $('#actualCourse').text();
+                let course = fetchContext(courseName);
+                course.spentTime = course.spentTime + userContext.pomodoro.workLength;
 
-CountDown.StartTimer(1000);
+                userContext.courses = userContext.courses.map(c => {
+                    if(c.name == courseName)
+                        return course
+                    else
+                        return c
+                });
+                loadCourses();
+            }
+        } else {
+            time = time - 1000;
+            let Minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+            let Seconds = Math.floor((time % (1000 * 60)) / 1000);
+                
+            Timer.html( (Minutes < 10 ? '0' : '') + Minutes + ':' + (Seconds < 10 ? '0' : '') + Seconds );
+        }
+    },1000)
+});
 
 //// Updating pomodoro settings
 $("#savePomodoro").on("click", function(event) {
     event.preventDefault();
 
     let email = userContext.email;
-    let workLength = $("#pomoLength").val();
-    let breakLength = $("#bLength").val();
-    let longBreakLength = $("#lbLength").val();
+    let workLength = parseInt($("#pomoLength").val());
+    let breakLength = parseInt($("#bLength").val());
+    let longBreakLength = parseInt($("#lbLength").val());
 
     let pomodoro = {workLength, breakLength, longBreakLength};
+    console.log(pomodoro);
 
     // update userContext
     userContext.pomodoro = pomodoro;
