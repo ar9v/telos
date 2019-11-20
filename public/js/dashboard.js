@@ -100,7 +100,7 @@ function fetchContext(courseName) {
 }
 
 function createTaskHTML(task) {
-    let item = $(`<span>${task.description}</span>`);
+    let item = $(`<span id="${task.id}">${task.description}</span>`);
 
     // Create the li
     let listItem = $("<li></li>");
