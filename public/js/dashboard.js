@@ -436,6 +436,10 @@ $(".courses-display").on("click", ".delCourse", function(event) {
 $(".history-block").on("click", ".delCourse", function(event) {
     event.stopPropagation();
     let courseName = $(this).parent().parent().children("h3").text();
+    if(fetchContext(courseName)) {
+        window.alert("Can't delete the history of an existing course");
+        return;
+    }
 
     // Remove from userContext
     userContext.history = userContext.history.filter(h => h.name != courseName);
@@ -490,6 +494,10 @@ $('#stop').on('click', function() {
 });
 
 $('#start').on('click', function() {
+    if(!$('#actualCourse').text()) {
+        window.alert("Please select a course.");
+        return;
+    }
     let Timer = $('#timer');
     let StartB = $('#start').hide();
     let StopB = $('#stop').show();

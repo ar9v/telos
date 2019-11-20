@@ -44,6 +44,7 @@ app.post('/api/register', jsonParser, (req, res) => {
 					return res.status(500).json(err);
 				});
 			} else {
+				res.statusMessage = "User Already Exists";
 				return res.status(409).json({message: "User Already Exists"});
 			}
 		}).catch( err => {
