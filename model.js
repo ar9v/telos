@@ -170,8 +170,14 @@ let UserList = {
 		}).catch( error => {
 			return error;
 		})
+	},
+	deleteHistory : function(email, name) {
+		return User.findOneAndUpdate({email: email}, {$pull: { history: {name: name}}}).then( () => {
+			return 202;
+		}).catch(error => {
+			throw Error(error);
+		});
 	}
-
 }
 
 module.exports = {  UserList };

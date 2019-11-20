@@ -88,6 +88,10 @@ function loadConfig() {
 }
 
 function createCourseHTML(course) {
+    let header = $(`<header class='w3-container'>
+                      <span class='delCourse w3-button'>
+                         &times;
+                      </span>'`);
     let cname = $(`<h3>${course.name}</h3>`);
     let percentage = $(`<span class="percentage">
                             ${course.spentTime / course.allottedTime * 100}%
@@ -95,7 +99,7 @@ function createCourseHTML(course) {
     let progress = $('<div class="progress-bar"></div>');
     progress.width(`${percentage}%`);
     let div = $('<div class="course w3-animate-opacity"></div>')
-    div.append(cname, percentage, progress);
+    div.append(header, cname, percentage, progress);
     return div;
 }
 
@@ -104,11 +108,15 @@ function loadCourses() {
 }
 
 function createHistoryHTML(hist) {
+    let header = $(`<header class='w3-container'>
+                      <span class='delCourse w3-button'>
+                         &times;
+                      </span>'`);
     let hname = $(`<h3>${hist.name}</h3>`);
     let msg = $(`<span>Pomodoro Total</span>`);
     let stat = $(`<span>${hist.pomodoroCount}</span>`);
     let div = $('<div class="history"></div>')
-    div.append(hname, msg, stat);
+    div.append(header, hname, msg, stat);
     return div;
 }
 
@@ -157,6 +165,7 @@ function createCourseInfo(course) {
 
 // Front-end interaction
 //// Adding propagation of events to child elements
+//// Population of course area
 $(".courses-display").on("click", ".course", function(event) {
     let courseName = $(this).children("h3").text();
     let course = fetchContext(courseName);
@@ -279,7 +288,7 @@ $("ul").on("click", ".deleteB", function(event) {
     });
 });
 
-//// Adding courses
+//// Adding and updating courses (CRUD)
 $("#addCourse").on("click", (event) => {
     event.preventDefault();
 
@@ -331,6 +340,52 @@ $("#addCourse").on("click", (event) => {
         }
     });
 });
+
+$(".courses-display").on("click", ".delCourse", function(event) {
+    event.stopPropagation();
+    let courseName = $(this).parent().parent().children("h3").text();
+
+    // Remove from userContext
+    userContext.courses = userContext.courses.filter(c => c.name != courseName);
+    $(this).parent().parent().remove();
+
+    // Remove from mongo
+    $.ajax({
+        url: '/api/deleteCourse',
+        method: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify({email: userContext.email, name: courseName}),
+        success: function(response) {
+            window.alert("Course removed successfully");
+        },
+        error: function(err) {
+            window.alert("Course could not be removed. Try again later")
+        }
+    });
+});
+
+$(".history-block").on("click", ".delCourse", function(event) {
+    event.stopPropagation();
+    let courseName = $(this).parent().parent().children("h3").text();
+
+    // Remove from userContext
+    userContext.history = userContext.history.filter(h => h.name != courseName);
+    $(this).parent().parent().remove();
+
+    // Remove from mongo
+    $.ajax({
+        url: '/api/deleteHistory',
+        method: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify({email: userContext.email, name: courseName}),
+        success: function(response) {
+            window.alert("History removed successfully");
+        },
+        error: function(err) {
+            window.alert("History could not be removed. Try again later")
+        }
+    });
+})
 
 function addHistory(hist) {
     let email = userContext.email;
@@ -455,3 +510,36 @@ $('#start').on('click', function() {
 });
 
 CountDown.StartTimer(1000);
+
+//// Updating pomodoro settings
+$("#savePomodoro").on("click", function(event) {
+    event.preventDefault();
+
+    let email = userContext.email;
+    let workLength = $("#pomoLength").val();
+    let breakLength = $("#bLength").val();
+    let longBreakLength = $("#lbLength").val();
+
+    let pomodoro = {workLength, breakLength, longBreakLength};
+
+    // update userContext
+    userContext.pomodoro = pomodoro;
+
+    // update mongo
+    $.ajax({
+        url: '/api/updatePomodoro',
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({email, pomodoro}),
+        success: function(response) {
+            window.alert("Pomodoro settings saved!");
+            // Redraw timer
+            setPomodoro();
+        },
+        error: function(err) {
+            console.log(err);
+            window.alert("There was an error.. Please try again later");
+        }
+    });
+});
+
