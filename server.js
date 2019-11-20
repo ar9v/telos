@@ -126,8 +126,8 @@ app.post('/api/createCourse', jsonParser, (req, res) => {
 });
 
 app.put('/api/updateCourse', jsonParser, (req, res) => {
-	let {email, name, allottedTime} = req.body;
-	UserList.putCourse(email, {name, allottedTime}).then( response => {
+	let {email, course} = req.body;
+	UserList.putCourse(email, course).then( response => {
 		console.log(response);
 		if(response == 404)  {
 			res.statusMessage = "Course not found";

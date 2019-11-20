@@ -96,10 +96,10 @@ function createCourseHTML(course) {
                       </span>'`);
     let cname = $(`<h3>${course.name}</h3>`);
     let percentage = $(`<span class="percentage">
-                            ${(course.spentTime / course.allottedTime * 100).toFixed(2)}%
+                            ${(course.spentTime / (course.allottedTime * 60) * 100).toFixed(2)}%
                         </span>`);
     let progress = $('<div class="progress-bar"></div>');
-    progress.width(course.spentTime / course.allottedTime * 100 + '%');
+    progress.width(course.spentTime / (course.allottedTime * 60) * 100 + '%');
     let div = $('<div class="course w3-animate-opacity"></div>')
     div.append(header, cname, percentage, progress);
     return div;
@@ -344,6 +344,58 @@ $("#addCourse").on("click", (event) => {
     });
 });
 
+function updateCourse(email, course) {
+}
+
+$("#updateCourse").on("click", event => {
+    event.preventDefault();
+
+    let email = userContext.email;
+    let name = $("#courseName").val();
+    let allottedTime = $("#allottedTime").val();
+
+    // Clean up the inputs
+    $("#courseName").val("");
+    $("#allottedTime").val("");
+
+
+    if(!name || !allottedTime) {
+        window.alert("At least one field is missing. Please try again");
+        return;
+    }
+    let updatedCourse = fetchContext(name);
+    updatedCourse.allottedTime = allottedTime;
+
+    //Update User Context
+    userContext.courses = userContext.courses.map(c => {
+        if(c.name == name) 
+            return updatedCourse;
+        else
+            return c
+    });
+
+    // Update in Database
+    $.ajax({
+        url: '/api/updateCourse',
+        contentType: 'application/JSON',
+        data: JSON.stringify({email, course: updatedCourse}),
+        method: "PUT",
+        success: function(response) {
+            loadCourses();
+            window.alert("The course was updated successfully");
+        },
+        error: function(err) {
+            if(err.status == 404)
+                window.alert("The user doesn't exist");
+            else if(err.status == 409)
+                window.alert("The course already exists");
+            else
+                window.alert("Server Error: Please try again later");
+        }
+    });
+
+})
+
 $(".courses-display").on("click", ".delCourse", function(event) {
     event.stopPropagation();
     let courseName = $(this).parent().parent().children("h3").text();
@@ -461,7 +513,24 @@ $('#start').on('click', function() {
                     else
                         return c
                 });
-                loadCourses();
+                
+                $.ajax({
+                    url: '/api/updateCourse',
+                    contentType: 'application/JSON',
+                    data: JSON.stringify({email, course}),
+                    method: "PUT",
+                    success: function(response) {
+                        loadCourses();
+                    },
+                    error: function(err) {
+                        if(err.status == 404)
+                            window.alert("The user doesn't exist");
+                        else if(err.status == 409)
+                            window.alert("The course already exists");
+                        else
+                            window.alert("Server Error: Please try again later");
+                    }
+                });
             }
         } else {
             time = time - 1000;
