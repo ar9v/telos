@@ -162,7 +162,7 @@ app.post('/api/createTask', jsonParser, (req, res) => {
 });
 
 app.delete('/api/deleteTask', jsonParser, (req, res) => {
-	let { email, name, id} =  req.body;
+	let {email, name, id} =  req.body;
 	UserList.deleteTask(email, name, id).then( response => {
 		console.log(response);
 		return res.status(200).json(response);

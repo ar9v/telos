@@ -193,17 +193,28 @@ $("ul").on("click", ".deleteB", function(event) {
     let taskId = $(this).siblings("span").attr("id");
     $(this).parent().remove();
 
-    let courseName = $("#actualCourse").text();
-    let course = fetchContext(courseName);
+    let name = $("#actualCourse").text();
+    let course = fetchContext(name);
 
     // Delete from userContext
     course.tasks = course.tasks.filter(task => task._id != taskId);
     userContext.courses.forEach(c => {
-        if(c.name == courseName)
+        if(c.name == name)
             c.tasks = course.tasks;
     });
 
+    let email = userContext.email;
     // Delete from mongo
+    $.ajax({
+        url: '/api/deleteTask',
+        contentType: 'application/json',
+        data: JSON.stringify({email, name, id: taskId}),
+        method: "DELETE",
+        success: function(response) {
+            console.log("Successful Deletion");
+        },
+        error: function(err) { console.log(err) }
+    });
 });
 
 //// Adding courses
