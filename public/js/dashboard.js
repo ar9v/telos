@@ -141,6 +141,7 @@ function createCourseInfo(course) {
 
 // Front-end interaction
 //// Adding propagation of events to child elements
+//// Population of course area
 $(".courses-display").on("click", ".course", function(event) {
     let courseName = $(this).children("h3").text();
     let course = fetchContext(courseName);
@@ -263,7 +264,7 @@ $("ul").on("click", ".deleteB", function(event) {
     });
 });
 
-//// Adding courses
+//// Adding and updating courses
 $("#addCourse").on("click", (event) => {
     event.preventDefault();
 
@@ -341,3 +342,35 @@ function addHistory(hist) {
         }
     });
 }
+
+//// Updating pomodoro settings
+$("#savePomodoro").on("click", function(event) {
+    event.preventDefault();
+
+    let email = userContext.email;
+    let workLength = $("#pomoLength").val();
+    let breakLength = $("#bLength").val();
+    let longBreakLength = $("#lbLength").val();
+
+    let pomodoro = {workLength, breakLength, longBreakLength};
+
+    // update userContext
+    userContext.pomodoro = pomodoro;
+
+    // update mongo
+    $.ajax({
+        url: '/api/updatePomodoro',
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({email, pomodoro}),
+        success: function(response) {
+            window.alert("Pomodoro settings saved!");
+            // Redraw timer
+            setTimer();
+        },
+        error: function(err) {
+            console.log(err);
+            window.alert("There was an error.. Please try again later");
+        }
+    });
+});
