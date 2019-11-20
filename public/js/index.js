@@ -10,6 +10,11 @@ $('#signup').on('click', (event) => {
         return;
     }
 
+    if(!email.match(/[a-zA-Z0-9-_.+]+@[a-zA-Z]+\.[a-zA-Z]+/g)) {
+        window.alert("Please enter a valid email address");
+        return;
+    }
+
     $.ajax({
         url: '/api/register',
         contentType: 'application/json',
@@ -37,6 +42,10 @@ $('#login').on('click', (event) => {
     // Is a field empty?
     if(!email | !password) {
         window.alert("A field is empty. Please write both your email and password.")
+        return;
+    }
+    if(!email.match(/[a-zA-Z0-9-_.+]+@[a-zA-Z]+\.[a-zA-Z]+/g)) {
+        window.alert("Please enter a valid email address");
         return;
     }
     $.ajax({
