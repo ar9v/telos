@@ -72,6 +72,10 @@ function loadConfig() {
 }
 
 function createCourseHTML(course) {
+    let header = $(`<header class='w3-container'>
+                      <span class='delCourse w3-button'>
+                         &times;
+                      </span>'`);
     let cname = $(`<h3>${course.name}</h3>`);
     let percentage = $(`<span class="percentage">
                             ${course.spentTime / course.allottedTime * 100}%
@@ -79,7 +83,7 @@ function createCourseHTML(course) {
     let progress = $('<div class="progress-bar"></div>');
     progress.width(`${percentage}%`);
     let div = $('<div class="course w3-animate-opacity"></div>')
-    div.append(cname, percentage, progress);
+    div.append(header, cname, percentage, progress);
     return div;
 }
 
@@ -88,11 +92,15 @@ function loadCourses() {
 }
 
 function createHistoryHTML(hist) {
+    let header = $(`<header class='w3-container'>
+                      <span class='delCourse w3-button'>
+                         &times;
+                      </span>'`);
     let hname = $(`<h3>${hist.name}</h3>`);
     let msg = $(`<span>Pomodoro Total</span>`);
     let stat = $(`<span>${hist.pomodoroCount}</span>`);
     let div = $('<div class="history"></div>')
-    div.append(hname, msg, stat);
+    div.append(header, hname, msg, stat);
     return div;
 }
 
@@ -264,7 +272,7 @@ $("ul").on("click", ".deleteB", function(event) {
     });
 });
 
-//// Adding and updating courses
+//// Adding and updating courses (CRUD)
 $("#addCourse").on("click", (event) => {
     event.preventDefault();
 
@@ -316,6 +324,35 @@ $("#addCourse").on("click", (event) => {
         }
     });
 });
+
+$(".courses-display").on("click", ".delCourse", function(event) {
+    event.stopPropagation();
+    let courseName = $(this).parent().parent().children("h3").text();
+
+    // Remove from userContext
+    userContext.courses = userContext.courses.filter(c => c.name != courseName);
+    $(this).parent().parent().remove();
+
+    // Remove from mongo
+    $.ajax({
+        url: '/api/deleteCourse',
+        method: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify({email: userContext.email, name: courseName}),
+        success: function(response) {
+            window.alert("Course removed successfully");
+        },
+        error: function(err) {
+            window.alert("Course could not be removed. Try again later")
+        }
+    });
+});
+
+$(".history-block").on("click", ".delCourse", function(event) {
+    let courseName = $(this).parent().parent().children("h3").text();
+
+    // Remove from userContext
+})
 
 function addHistory(hist) {
     let email = userContext.email;

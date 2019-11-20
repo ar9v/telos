@@ -91,6 +91,11 @@ li > button {
     display: flex;
 }
 
+.course > header, .history > header {
+    align-self: flex-end;
+    font-size: 25px;
+}
+
 .progress-bar {
     background: whitesmoke;
     width: 0%;
