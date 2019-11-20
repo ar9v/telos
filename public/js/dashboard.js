@@ -106,7 +106,7 @@ function fetchContext(courseName) {
 }
 
 function createTaskHTML(task) {
-    let item = $(`<span id="${task.id}">${task.description}</span>`);
+    let item = $(`<span id=${task._id}>${task.description}</span>`);
 
     // Create the li
     let listItem = $("<li></li>");
@@ -166,9 +166,9 @@ $("#addTaskButton").on("click", function(event) {
         data: JSON.stringify({email, name, description}),
         method: 'POST',
         success: function(response) {
-            let id = response._id;
+            let _id = response._id;
             let newTask = {
-                id,
+                _id,
                 description,
                 complete
             };
@@ -190,14 +190,14 @@ $("ul").on("click", ".checkB", function(event) {
 });
 
 $("ul").on("click", ".deleteB", function(event) {
-    let taskDescription = $(this).siblings("span").text();
+    let taskId = $(this).siblings("span").attr("id");
     $(this).parent().remove();
 
     let courseName = $("#actualCourse").text();
     let course = fetchContext(courseName);
 
     // Delete from userContext
-    course.tasks = course.tasks.filter(task => task.description != taskDescription);
+    course.tasks = course.tasks.filter(task => task._id != taskId);
     userContext.courses.forEach(c => {
         if(c.name == courseName)
             c.tasks = course.tasks;
