@@ -173,6 +173,14 @@ function createCourseInfo(course) {
 }
 
 // Front-end interaction
+
+/// Logout
+$("#logout").on("click", event => {
+    sessionStorage.removeItem("email");
+    window.location.href = "/";
+})
+
+
 //// Adding propagation of events to child elements
 //// Population of course area
 $(".courses-display").on("click", ".course", function(event) {
