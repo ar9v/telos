@@ -223,6 +223,17 @@ app.put('/api/updateHistory', jsonParser, (req, res) => {
 	})
 });
 
+app.delete('/api/deleteHistory', jsonParser, (req, res) => {
+	let {email, name} = req.body;
+	UserList.deleteHistory(email, name).then( response => {
+		return res.status(202).json(response);
+	}).catch(err => {
+		console.log(err);
+		return res.status(500).json(err);
+	})
+});
+
+
 let server;
 
 function runServer(port, databaseUrl) {

@@ -349,9 +349,26 @@ $(".courses-display").on("click", ".delCourse", function(event) {
 });
 
 $(".history-block").on("click", ".delCourse", function(event) {
+    event.stopPropagation();
     let courseName = $(this).parent().parent().children("h3").text();
 
     // Remove from userContext
+    userContext.history = userContext.history.filter(h => h.name != courseName);
+    $(this).parent().parent().remove();
+
+    // Remove from mongo
+    $.ajax({
+        url: '/api/deleteHistory',
+        method: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify({email: userContext.email, name: courseName}),
+        success: function(response) {
+            window.alert("History removed successfully");
+        },
+        error: function(err) {
+            window.alert("History could not be removed. Try again later")
+        }
+    });
 })
 
 function addHistory(hist) {
