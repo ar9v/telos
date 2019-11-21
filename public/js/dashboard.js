@@ -467,6 +467,10 @@ $(".courses-display").on("click", ".delCourse", function(event) {
         contentType: 'application/json',
         data: JSON.stringify({email: userContext.email, name: courseName}),
         success: function(response) {
+            $('#actualCourse').text("");
+            $('#addTaskBar').hide();
+            $('#task-area').empty();
+            $('#course-specifics').empty();
             showAlert("Course removed successfully");
         },
         error: function(err) {
