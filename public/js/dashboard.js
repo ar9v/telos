@@ -15,13 +15,37 @@ var userContext = {
     pomodoroCount: 0
 };
 
+function showAlert(message, color='#111') {
+    $.toast({ 
+      text : "<div class='alert'>" + message + "</div>", 
+      showHideTransition : 'slide',  // It can be plain, fade or slide
+      bgColor : color,              // Background color for toast
+      textColor : 'whitesmoke',            // text color
+      hideAfter : 4000,              // `false` to make it sticky or time in miliseconds to hide after
+      stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+      textAlign : 'left',            // Alignment of text i.e. left, right, center
+      position : 'top-right'        // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+    });
+}
+
 let pomodoroCycle = 1;
 let pomodoroTimer;
 
 let email = window.sessionStorage.getItem("email");
 if(!email) {
-    window.alert("Please log in.");
-    window.location.href = '/';
+    $.toast({ 
+      text : "<div class='alert'>Please log in.</div>", 
+      showHideTransition : 'slide',  // It can be plain, fade or slide
+      bgColor : '#cf5353',              // Background color for toast
+      textColor : 'whitesmoke',            // text color
+      hideAfter : 3000,              // `false` to make it sticky or time in miliseconds to hide after
+      stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+      textAlign : 'left',            // Alignment of text i.e. left, right, center
+      position : 'mid-center'        // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+    });
+    setTimeout(() => {
+        window.location.href = '/';
+    }, 3000);
 };
 
 //// We must obtain a user's information to populate the dashboard
@@ -318,7 +342,7 @@ $("#addCourse").on("click", (event) => {
     $("#allottedTime").val("");
 
     if(!name || !allottedTime) {
-        window.alert("At least one field is missing. Please try again");
+        showAlert("At least one field is missing. Please try again", '#cf5353');
         return;
     }
 
@@ -345,15 +369,15 @@ $("#addCourse").on("click", (event) => {
             userContext.courses.push(newCourse);
             $(".courses-display").append(createCourseHTML(newCourse));
             addHistory(newHist)
-            window.confirm("The course was created successfully");
+            showAlert("The course was created successfully");
         },
         error: function(err) {
             if(err.status == 404)
-                window.alert("The user doesn't exist");
+                showAlert("The user doesn't exist", '#cf5353');
             else if(err.status == 409)
-                window.alert("The course already exists");
+                showAlert("The course already exists", '#cf5353');
             else
-                window.alert("Server Error: Please try again later");
+                showAlert("Server Error: Please try again later", '#cf5353');
         }
     });
 });
@@ -374,7 +398,7 @@ $("#updateCourse").on("click", event => {
 
 
     if(!name || !allottedTime) {
-        window.alert("At least one field is missing. Please try again");
+        showAlert("At least one field is missing. Please try again", '#cf5353');
         return;
     }
     let updatedCourse = fetchContext(name);
@@ -396,15 +420,15 @@ $("#updateCourse").on("click", event => {
         method: "PUT",
         success: function(response) {
             loadCourses();
-            window.alert("The course was updated successfully");
+            showAlert("The course was updated successfully");
         },
         error: function(err) {
             if(err.status == 404)
-                window.alert("The user doesn't exist");
+                showAlert("The user doesn't exist", '#cf5353');
             else if(err.status == 409)
-                window.alert("The course already exists");
+                showAlert("The course already exists", '#cf5353');
             else
-                window.alert("Server Error: Please try again later");
+                showAlert("Server Error: Please try again later", '#cf5353');
         }
     });
 
@@ -425,10 +449,10 @@ $(".courses-display").on("click", ".delCourse", function(event) {
         contentType: 'application/json',
         data: JSON.stringify({email: userContext.email, name: courseName}),
         success: function(response) {
-            window.alert("Course removed successfully");
+            showAlert("Course removed successfully");
         },
         error: function(err) {
-            window.alert("Course could not be removed. Try again later")
+            showAlert("Course could not be removed. Try again later", '#cf5353')
         }
     });
 });
@@ -437,7 +461,7 @@ $(".history-block").on("click", ".delCourse", function(event) {
     event.stopPropagation();
     let courseName = $(this).parent().parent().children("h3").text();
     if(fetchContext(courseName)) {
-        window.alert("Can't delete the history of an existing course");
+        showAlert("Can't delete the history of an existing course", '#cf5353');
         return;
     }
 
@@ -452,10 +476,10 @@ $(".history-block").on("click", ".delCourse", function(event) {
         contentType: 'application/json',
         data: JSON.stringify({email: userContext.email, name: courseName}),
         success: function(response) {
-            window.alert("History removed successfully");
+            showAlert("History removed successfully");
         },
         error: function(err) {
-            window.alert("History could not be removed. Try again later")
+            showAlert("History could not be removed. Try again later", '#cf5353')
         }
     });
 })
@@ -495,7 +519,7 @@ $('#stop').on('click', function() {
 
 $('#start').on('click', function() {
     if(!$('#actualCourse').text()) {
-        window.alert("Please select a course.");
+        showAlert("Please select a course.", '#cf5353');
         return;
     }
     let Timer = $('#timer');
@@ -565,13 +589,13 @@ $('#start').on('click', function() {
                                 loadHistory();
                             },
                             error: err => {
-                                window.alert("Server Error: Please try again later");
+                                showAlert("Server Error: Please try again later", '#cf5353');
                             }
                         })
 
                     },
                     error: function(err) {
-                        window.alert("Server Error: Please try again later");
+                        showAlert("Server Error: Please try again later", '#cf5353');
                     }
                 });
             }
@@ -607,13 +631,13 @@ $("#savePomodoro").on("click", function(event) {
         contentType: 'application/json',
         data: JSON.stringify({email, pomodoro}),
         success: function(response) {
-            window.alert("Pomodoro settings saved!");
+            showAlert("Pomodoro settings saved!");
             // Redraw timer
             setPomodoro();
         },
         error: function(err) {
             console.log(err);
-            window.alert("There was an error.. Please try again later");
+            showAlert("There was an error.. Please try again later", '#cf5353');
         }
     });
 });

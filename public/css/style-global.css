@@ -74,3 +74,8 @@ nav {
 .w3-animate-top {
     animation-duration: 0.6s;
 }
+
+.alert {
+    font-size: 16px;
+    font-family: 'Fira Sans', sans-serif;
+}
