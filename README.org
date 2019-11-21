@@ -48,6 +48,9 @@ Once in the Dashboard, a basic workflow would look something like this:
 And that's pretty much it! If you've got some ideas, feel free to drop a line
 here or by email (aricav96@gmail.com).
 
+** Heroku live version
+To try out Telos, click on [[https://quiet-atoll-67051.herokuapp.com/][this link]].
+
 ** Screenshots
 [[./public/img/feature1.png]]
 [[./public/img/feature2.png]]
