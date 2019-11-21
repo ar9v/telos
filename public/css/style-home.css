@@ -30,11 +30,27 @@ input {
 
 .features {
     display: flex;
+    align-items: stretch;
 }
 
 .feature {
     display: flex;
     flex-direction: column;
+    width: 30%;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid gainsboro;
+    margin: 5px;
+}
+
+.feature > img {
+    width: 95%;
+}
+
+.feature > p {
+    font-size: 20px;
+    text-align: center;
 }
 
 .submits {
