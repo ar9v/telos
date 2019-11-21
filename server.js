@@ -11,6 +11,7 @@ let jsonParser = bodyParser.json();
 
 app.use(express.static('public'));
 app.use(morgan('combined'));
+app.use('/favicon.ico', express.static('/favicon.ico'));
 
 // API
 app.get('/dashboard', (req, res) => {
