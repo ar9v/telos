@@ -60,7 +60,7 @@ $.ajax({
         setUserContext(response[0]);
         populate();
     },
-    error: function(err) { console.log(err) }
+    error: function(err) { showAlert(err, '#cf5353') }
 });
 
 function setUserContext(mongoUser) {
@@ -80,18 +80,22 @@ function populate() {
 }
 
 function setPomodoro() {
-    var Timer = $('#timer');
-    var time = 0;
+    let Timer = $('#timer');
+    let Status = $('#timerStatus')
+    let time = 0;
     let cycle = pomodoroCycle % 8;
     if(cycle == 0) {
         //Long Break
         time = userContext.pomodoro.longBreakLength;
+        Status.text("Long Break")
         //Add time and counter to current course
     } else if(cycle % 2 == 1) {
         //Work Time
+        Status.text("Working")
         time = userContext.pomodoro.workLength;
     } else {
         //Short Break
+        Status.text("Short Break")
         time = userContext.pomodoro.breakLength;
         //Add time and counter to current course
     }
@@ -157,7 +161,6 @@ function fetchContext(courseName) {
 }
 function fetchContextH(courseName) {
     let result = userContext.history.filter(h => h.name == courseName);
-    console.log(result[0]);
     return result[0];
 }
 
@@ -166,6 +169,7 @@ function createTaskHTML(task) {
 
     if(task.complete) {
         item.css("text-decoration", "line-through");
+        item.css("opacity", 0.5)
     }
     else {
         item.css("text-decoration", "");
@@ -261,7 +265,7 @@ $("#addTaskButton").on("click", function(event) {
             $("#task-area").append(createTaskHTML(newTask));
             createCourseInfo(course);
         },
-        error: function(err) {console.log(err) }
+        error: function(err) {showAlert(err.statusText, '#cf5353') }
     });
 });
 
@@ -275,9 +279,11 @@ $("ul").on("click", ".checkB", function(event) {
 
     if(cssState === "line-through") {
         $(this).next().css("text-decoration", "");
+        $(this).next().css("opacity", 1);
     }
     else {
         $(this).next().css("text-decoration", "line-through");
+        $(this).next().css("opacity", 0.5);
         complete = true;
     }
 
@@ -330,9 +336,9 @@ $("ul").on("click", ".deleteB", function(event) {
         data: JSON.stringify({email, name, id: taskId}),
         method: "DELETE",
         success: function(response) {
-            console.log("Successful Deletion");
+            //console.log("Successful Deletion");
         },
-        error: function(err) { console.log(err) }
+        error: function(err) { showAlert(err.statusText, "#cf5353") }
     });
 });
 
@@ -512,12 +518,7 @@ function addHistory(hist) {
             $(".history-block").append(createHistoryHTML(hist));
         },
         error: function(err) {
-            if(err.status == 404)
-                console.log("The user doesn't exist");
-            else if(err.status == 409)
-                console.log("The course history already exists");
-            else
-                console.log("Server Error: Please try again later")
+            // Errror is already being handled by Course creation
         }
     });
 }
@@ -582,7 +583,6 @@ $('#start').on('click', function() {
 
                         // Update History
                         historyResult = fetchContextH(courseName);
-                        console.log(historyResult);
                         historyResult.pomodoroCount = historyResult.pomodoroCount + 1;
 
                         userContext.history = userContext.history.map(h => {
@@ -645,7 +645,6 @@ $("#savePomodoro").on("click", function(event) {
 
 
     let pomodoro = {workLength, breakLength, longBreakLength};
-    console.log(pomodoro);
 
     // update userContext
     userContext.pomodoro = pomodoro;
@@ -662,7 +661,6 @@ $("#savePomodoro").on("click", function(event) {
             setPomodoro();
         },
         error: function(err) {
-            console.log(err);
             showAlert("There was an error.. Please try again later", '#cf5353');
         }
     });
