@@ -18,6 +18,10 @@ app.use('/favicon.ico', express.static('/favicon.ico'));
 app.get('/dashboard', (req, res) => {
 	res.sendFile('/public/dashboard.html', {root: __dirname});
 });
+app.get('/about', (req, res) => {
+	res.sendFile('/public/about.html', {root: __dirname});
+});
+
 
 app.post('/api/register', jsonParser, (req, res) => {
 	let {email, password} = req.body;
