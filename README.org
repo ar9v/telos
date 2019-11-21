@@ -23,27 +23,32 @@ units represents an artificial (but useful) limit. In the next section, we
 explore the implications of this idea.
 
 ** Workflow
-In Telos, the user adds Courses (this is merely a logical division of tasks; kind
-of like a tag). Each Course has a weekly allotted time, provided by the user in
-their configuration. So, for example, a Math Course may demand 5 hours a week of
-attention. The user would then, in their dashboard, click on a Course to make it
-active and then run the timer. The net result is that the timer length (a
-classical pomodoro is 25 minutes long; the user can change it) is subtracted
-from the weekly allotted time, giving the user a sense of how much time they
-have dedicated to a given Course at a given week.
+To use Telos, head to Home, sign-up, and login. This will take you to the Dashboard.
+Once in the Dashboard, a basic workflow would look something like this:
 
-** TODO
-- Front end:
-  - Home
-  - About
-  - Login/Signup
-  - Dashboard
-  - Config page
-  - Design favicon/logo
-- Back end:
-  - API
-  - Database
-    - Cluster db creation
-  - Deployment
-- Docs:
-  - Illustrate workflow with screenshots or screencaps
+- Click on Configuration and add a Course by supplying a name and a number which
+  represents the amount of hours you will dedicate to that course /at most/
+  during the week.
+
+- A Course Card will pop up. Close the configuration and click on the Card to
+  populate the Course Information Area. A task input will appear on the right.
+  You can supply tasks to populate the area further.
+
+- Click on the pomodoro timer start button when you're ready to work. Pomodoros
+  are atomic, which means that you either complete one or you don't. Concentrate
+  and work hard! You can always stop the pomodoro by clicking on the Stop button.
+
+- Pomodoro times can be changed in the Configuration menu. These values represent
+  minutes. Try to fiddle around to find your preferred balance.
+
+- Once the timer runs out, the information in the Course Card will be updated and
+  you'll be able to start your break. The History Cards on the lower portion of
+  the page will indicate how many pomodoros you've completed historically.
+
+And that's pretty much it! If you've got some ideas, feel free to drop a line
+here or by email (aricav96@gmail.com).
+
+** Screenshots
+[[./public/img/feature1.png]]
+[[./public/img/feature2.png]]
+[[./public/img/feature3.png]]
