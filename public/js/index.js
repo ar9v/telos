@@ -41,7 +41,7 @@ $('#signup').on('click', (event) => {
                 showAlert("User created successfully");
         },
         error: function(err) {
-            showAlert(err.statusText);
+            showAlert(err.statusText, '#cf5353');
         }
     });
 });

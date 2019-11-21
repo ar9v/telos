@@ -420,6 +420,10 @@ $("#updateCourse").on("click", event => {
         return;
     }
     let updatedCourse = fetchContext(name);
+    if(!updatedCourse) {
+        showAlert("Course doesn't exist", '#cf5353');
+        return;
+    }
     updatedCourse.allottedTime = allottedTime;
 
     //Update User Context
@@ -636,9 +640,9 @@ $("#savePomodoro").on("click", function(event) {
     let workLength = parseInt($("#pomoLength").val());
     let breakLength = parseInt($("#bLength").val());
     let longBreakLength = parseInt($("#lbLength").val());
-    parseInt($("#pomoLength").val(workLength));
-    parseInt($("#bLength").val(breakLength));
-    parseInt($("#lbLength").val(longBreakLength));
+    $("#pomoLength").val(isNaN(workLength) ? "" : workLength);
+    $("#bLength").val(isNaN(breakLength) ? "" : breakLength);
+    $("#lbLength").val(isNaN(longBreakLength) ? "" : longBreakLength);
 
     if (workLength <= 0 || breakLength <= 0 || longBreakLength <= 0) {
         showAlert("There can't be negative values.", '#cf5353');
