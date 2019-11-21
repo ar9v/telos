@@ -80,7 +80,6 @@ function populate() {
 }
 
 function setPomodoro() {
-    console.log('Podomoro Cycle:' + pomodoroCycle);
     var Timer = $('#timer');
     var time = 0;
     let cycle = pomodoroCycle % 8;
@@ -230,6 +229,12 @@ $(".courses-display").on("click", ".course", function(event) {
 $("#addTaskButton").on("click", function(event) {
     event.preventDefault();
     let taskText = $("#addTaskText").val();
+
+    if(!taskText) {
+        showAlert("Please add a task description", '#cf5353');
+        return;
+    }
+
     let email = userContext.email;
     let name = $("#actualCourse").text();
     let description = taskText;
@@ -242,7 +247,9 @@ $("#addTaskButton").on("click", function(event) {
         data: JSON.stringify({email, name, description}),
         method: 'POST',
         success: function(response) {
-            let _id = response._id;
+            let courses = response.courses;
+            let newCourse = courses.find(e => e.name == name);
+            let _id = newCourse.tasks[newCourse.tasks.length - 1]._id;
             let newTask = {
                 _id,
                 description,
@@ -335,7 +342,7 @@ $("#addCourse").on("click", (event) => {
 
     let email = userContext.email;
     let name = $("#courseName").val();
-    let allottedTime = $("#allottedTime").val();
+    let allottedTime = parseInt($("#allottedTime").val());
 
     // Clean up the inputs
     $("#courseName").val("");
@@ -343,6 +350,11 @@ $("#addCourse").on("click", (event) => {
 
     if(!name || !allottedTime) {
         showAlert("At least one field is missing. Please try again", '#cf5353');
+        return;
+    }
+
+    if(isNaN(allottedTime)) {
+        showAlert("Allotted time must be a number", '#cf5353');
         return;
     }
 
@@ -617,6 +629,20 @@ $("#savePomodoro").on("click", function(event) {
     let workLength = parseInt($("#pomoLength").val());
     let breakLength = parseInt($("#bLength").val());
     let longBreakLength = parseInt($("#lbLength").val());
+    parseInt($("#pomoLength").val(workLength));
+    parseInt($("#bLength").val(breakLength));
+    parseInt($("#lbLength").val(longBreakLength));
+
+    if (workLength <= 0 || breakLength <= 0 || longBreakLength <= 0) {
+        showAlert("There can't be negative values.", '#cf5353');
+        return;
+    }
+
+    if (isNaN(workLength) || isNaN(breakLength) || isNaN(longBreakLength)) {
+        showAlert("Values must be numbers.", '#cf5353');
+        return;
+    }
+
 
     let pomodoro = {workLength, breakLength, longBreakLength};
     console.log(pomodoro);
