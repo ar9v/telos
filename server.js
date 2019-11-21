@@ -5,6 +5,7 @@ let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
 let bcrypt = require('bcryptjs');
 let { UserList } = require('./model');
+const  {DATABASE_URL, PORT} = require('./config');
 // Setup
 let app = express();
 let jsonParser = bodyParser.json();
@@ -257,7 +258,7 @@ function runServer(port, databaseUrl) {
 	});
 };
 
-runServer("8080", "mongodb://localhost/telosTest").catch(function(error) {
+runServer(PORT, DATABASE_URL).catch(function(error) {
 	console.log(error);
 });
 
